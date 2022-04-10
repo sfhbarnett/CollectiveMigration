@@ -5,8 +5,8 @@ function [ROP] = RotationalOrderParameter(vectorfield)
 %   Output is the rotational order parameter where 0 indicates no
 %   rotational order and 1 equals perfect rotational order
 
-fieldx = vectorfield(:,1);
-fieldy = vectorfield(:,2);
+fieldx = vectorfield(:,1)./vectorfield(1,1);
+fieldy = vectorfield(:,2)./vectorfield(1,2);
 fieldu = vectorfield(:,3);
 fieldv = vectorfield(:,4);
 
