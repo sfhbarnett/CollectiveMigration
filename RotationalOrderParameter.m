@@ -1,6 +1,15 @@
-function [ROP] = RotationalOrderParameter(fieldx,fieldy,fieldu,fieldv)
-%UNTITLED4 Summary of this function goes here
-%   Detailed explanation goes here
+function [ROP] = RotationalOrderParameter(vectorfield)
+%Calculates the rotational order parameter
+%   Takes as inpuy an mx4 matrix representing a vectorfield with columens
+%   x, y, u, v
+%   Output is the rotational order parameter where 0 indicates no
+%   rotational order and 1 equals perfect rotational order
+
+fieldx = vectorfield(:,1);
+fieldy = vectorfield(:,2);
+fieldu = vectorfield(:,3);
+fieldv = vectorfield(:,4);
+
 cx = max(fieldx)/2;
 cy = max(fieldy)/2;
 
