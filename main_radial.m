@@ -7,8 +7,8 @@ cy = max(vectorfield(:,2)/vectorfield(1,2))/2;
 cx = 25;
 cy = 25;
 
-rotationcomponent = zeros(cx*2,cy*2,size(files,1)-2);
-tangentcomponent = zeros(cx*2,cy*2,size(files,1)-2);
+rotationcomponent = NaN(cx*2,cy*2,size(files,1)-2);
+tangentcomponent = NaN(cx*2,cy*2,size(files,1)-2);
 radius = 10;
 
 for f = 3:size(files)
