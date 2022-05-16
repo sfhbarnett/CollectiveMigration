@@ -1,7 +1,7 @@
 %% Load in data
 clear
 
-path = '/Users/sbarnett/Documents/PIVData/fatima/ForSam/monolayer1/C1-20210708_MCF10ARAB5A_H2BGFP_Monolayer_Doxy_withoutDoxy.czi - 20210708_MCF10ARAB5A_H2BGFP_Monolayer_Doxy_withoutDoxy.czi #19_Results/PIV_roi_velocity_text';
+path = '/Users/sbarnett/Documents/PIVData/fatima/200_D_C1_Phase_20220307_MCF10ARab5A_H2BGFP_uPatterns-01-Scene-04-P5-A01_cr_Results/PIV_roi_velocity_text';
 files = dir(path);
 
 names = {};
@@ -17,15 +17,15 @@ end
 
 %% Linearise Field
 %center x and y coordinates
-centerX = 25;
-centerY = 25;
+centerX = 32;
+centerY = 32;
 %change scale of x,y coordinates
 vectorfield(:,1,:) = vectorfield(:,1,:)./vectorfield(1,1,:);
 vectorfield(:,2,:) = vectorfield(:,2,:)./vectorfield(1,2,:);
 linearfield = vectorfield;
 %linearise the fields
 for i = 1:size(filessort,1)
-    [lfU,lfV] = LinearizeField(vectorfield(:,:,i),centerX,centerY);
+    [lfU,lfV] = LinearizeFieldScaled(vectorfield(:,:,i),centerX,centerY);
     linearfield(:,3,i) = lfU(:);
     linearfield(:,4,i) = lfV(:);
 end
