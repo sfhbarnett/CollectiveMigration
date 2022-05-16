@@ -10,6 +10,7 @@ end
 f = natsort(names).';
 %%
 ROP = [];
+LOP = []
 for i = 3:size(files,1)
     vectorfield = csvread(fullfile(files(3).folder,cell2mat(f(i))));
     %Uncomment which one you want to use

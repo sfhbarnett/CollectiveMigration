@@ -10,9 +10,11 @@ fieldy = vectorfield(:,2)./vectorfield(1,2);
 fieldu = vectorfield(:,3);
 fieldv = vectorfield(:,4);
 
+%assumes rotation relative to center of field
 cx = max(fieldx)/2;
 cy = max(fieldy)/2;
 
+%Reserve space in memory
 rotationcomponent = NaN(cx*2,cy*2);
 tangentcomponent = NaN(cx*2,cy*2);
 
