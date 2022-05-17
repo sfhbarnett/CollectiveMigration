@@ -1,6 +1,8 @@
 function [rotationcomponent,tangentcomponent] = LinearizeFieldScaled(vectorfield,cx,cy)
-%LINEARIZEFIELD Summary of this function goes here
-%   Detailed explanation goes here
+%LINEARIZEFIELD - converts rotated field into linear field
+%  left is anticlockwise rotation, right is clockwise rotation
+% up is out from center, down is in towards center
+% this function also maintains the scale of the original vector
 
 %Reserve memory for new vector components
 rotationcomponent = zeros(max(vectorfield(:,1)),max(vectorfield(:,2)));
