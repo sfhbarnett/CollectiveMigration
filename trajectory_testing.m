@@ -3,6 +3,9 @@
 MSD = [];
 counter = 1
 zerovectors = 0
+pixel_size = 0.65
+timestep = 30;
+
 for j = 1:size(vectorfield,1)
     if or(vectorfield(j,3,1)~=0, vectorfield(j,3,1)~=0)
         x = vectorfield(j,1,1);
@@ -30,3 +33,15 @@ for j = 1:size(vectorfield,1)
         end
     end
 end
+
+mMSD = mean(MSD,2).*pixel_size^2
+time = (1:126) .* timestep;
+MSDfit = fit(time',mMSD,'A*x.^2/(1+(B*x))','startpoint',[10 .5],'weight',1./time.^2);
+
+A = MSDfit.A;
+B = MSDfit.B;
+ci = confint(MSDfit,.95);
+da = ci(2,1)-ci(1,1);
+db = ci(2,2)-ci(1,2);
+L_p = sqrt(A)./B;
+%delta_p = sqrt((.5*da/(sqrt(A1)*B1)).^2+(db*sqrt(A1)./B1.^2))*3;
