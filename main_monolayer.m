@@ -59,7 +59,7 @@ startframe = 10;
 endframe = 100;
 corel = Correlation(vectorfield, startframe, endframe);
 
-x=((1:length(corel))-1).*(0.65*16); % create x axis
+x=((1:length(corel))-1).*pixelsize; % create x axis
 f_=fit(x',corel','exp2'); %generate a double exponential fit
 F = f_.a*exp(f_.b*x) + f_.c*exp(f_.d*x); % create plotting data for the fit
 
@@ -74,12 +74,13 @@ if plotting
     title('Correlation','FontSize',16)
 end
 %% Calculate Persistence length - works
+%might want to give a border to MSD calculation to stop artificial
+%curtailing
 
-pixel_size = 0.65;
-timeinteveral = 60;
 msd = MSD(vectorfield);
-mMSD = mean(msd,1).*pixel_size^2;
-MSDfit = fit(time',mMSD,'A*x.^2/(1+(B*x))','startpoint',[10 .5],'weight',1./time.^2);
+mMSD = mean(msd,1).*pixelsize^2;
+xtime = ((1:size(mMSD,2)).*timeinterval)'
+MSDfit = fit(xtime,mMSD','A*x.^2/(1+(B*x))','startpoint',[10 .5],'weight',1./xtime.^2);
 
 A = MSDfit.A;
 B = MSDfit.B;
@@ -89,7 +90,7 @@ db = ci(2,2)-ci(1,2);
 L_p = sqrt(A)./B;
 
 if plotting
-    loglog(time,mMSD)
+    loglog(xtime,mMSD)
     title('Mean Square Displacement','FontSize',16)
     xlabel('\DeltaT')
 end

@@ -25,6 +25,7 @@ for i = 1:size(vectorfield(:,1))
         tangentcomponent(y,x) = ycomponent*magnitude;
     else %if vector has zero magnitude, set to NaN
         tangentcomponent(y,x) = NaN;
+        rotationcomponent(y,x) = NaN;
     end
     
 end

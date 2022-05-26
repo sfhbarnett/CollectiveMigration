@@ -13,11 +13,12 @@ for vector = 1:size(vectorfield,1)
     y = vectorfield(vector,2)/vectorfield(1,2);
     u = vectorfield(vector,3);
     v = vectorfield(vector,4);
-
-    cumulative = cumulative + (u^2 + v^2);
-    totalu = totalu + u;
-    totalv = totalv + v;
-    total = total + 1;
+    if isnan(u) == 0 && isnan(v) == 0
+        cumulative = cumulative + (u^2 + v^2);
+        totalu = totalu + u;
+        totalv = totalv + v;
+        total = total + 1;
+    end
 end
 
 vrms = sqrt(cumulative/total);

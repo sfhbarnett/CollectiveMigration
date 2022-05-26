@@ -24,6 +24,8 @@ for frame = startframe:endframe
     vvx = reshape(vectorfield(:,3),[sqrt(size(vectorfield,1)),sqrt(size(vectorfield,1))]);
     vvy = reshape(vectorfield(:,4),[sqrt(size(vectorfield,1)),sqrt(size(vectorfield,1))]);
     %make sure image width/height is even number of elements
+    vvx(isnan(vvx)==1) = 0;
+    vvy(isnan(vvy)==1) = 0;
     vvx = vvx(1:minsize,1:minsize);
     vvy = vvy(1:minsize,1:minsize);
     
