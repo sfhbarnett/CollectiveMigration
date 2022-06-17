@@ -2,6 +2,7 @@
 %This script runs through PIV results data from Hui Ting's package and
 %calculates the rotational and tangent components for each vector assuming
 %a starting position of 25,25
+clear
 path = '/Users/sbarnett/Documents/PIVData/fatima/200_D_C1_Phase_20220307_MCF10ARab5A_H2BGFP_uPatterns-01-Scene-04-P5-A01_cr_Results/PIV_roi_velocity_text';
 files = dir(path);
 vectorfield = csvread(fullfile(files(3).folder,files(3).name));

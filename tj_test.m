@@ -1,4 +1,4 @@
-function trajectories = trajectories(vectorfield)
+
 
 trajectories = [];
 counter = 1;
@@ -120,4 +120,39 @@ for t = 2:size(vectorfield,3)
 end
 
 
+
+
+%%
+
+for t = 2:size(vectorfield,3)
+    tjs = trajectories(t,:);
+    t
+    for uind = 1:size(vectorfield,1)
+        for vind = 1:size(vectorfield,1)
+            d = min((tjs(1:2:end)-uind).^2 + (tjs(2:2:end)-vind).^2);
+            if d > 4
+                new_tj = [uind,vind];
+                c = 1;
+                lostvector = 0;
+                for furthert = t+1:size(vectorfield,3)
+                    newx = round(new_tj(c,1));
+                    newy = round(new_tj(c,2));
+                    
+                    if newy < 1 || newy > 63 || newx < 1 || newx > 63 %if trajectory leaves field
+                        lostvector = 1;
+                        break
+                    end
+                    
+                    newu = ufield(newy,newx,furthert);
+                    newv = vfield(newy,newx,furthert);
+                    
+                    new_tj(c+1,:) = [new_tj(c,1)+newu,new_tj(c,2)+newv];
+                    c = c + 1;
+                end
+                if lostvector ~= 1
+                    trajectories(t:end,end+1:end+2) = new_tj;
+                end
+            end
+        end
+    end
 end

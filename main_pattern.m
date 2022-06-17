@@ -95,7 +95,7 @@ end
 
 %% Calculate Persistence length - probably not right
 
-msd = MSD(vectorfield);
+msd = MSD(vectorfield); % check linear vs vectorfield
 mMSD = mean(msd,1).*pixelsize^2;
 xtime = ((1:size(mMSD,2)).*timeinterval)'
 MSDfit = fit(xtime,mMSD','A*x.^2/(1+(B*x))','startpoint',[10 .5],'weight',1./xtime.^2);
@@ -113,3 +113,26 @@ if plotting
     xlabel('\DeltaT')
 end
 
+%%
+tj = trajectories(vectorfield);
+tj(tj==0) = NaN;
+%Change the name! Don't forget to adjust the axes!
+myVideo = VideoWriter('pattern.avi');
+myVideo.FrameRate = 10;
+open(myVideo);
+figure('Position',[200,200,800,800])
+
+for i = 2:126-10
+    if i < 10
+        plot(tj(1:i,1:2:end),tj(1:i,2:2:end))
+        axis([20 45 20 45])
+    else
+        plot(tj(i-9:i,1:2:end),tj(i-9:i,2:2:end))
+        axis([20 45 20 45])
+    end
+    pause(0.02)
+    frame = getframe(gcf);
+    writeVideo(myVideo,frame);
+    
+end
+close(myVideo);

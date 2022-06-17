@@ -3,7 +3,7 @@ clear
 
 path = '/Users/sbarnett/Documents/PIVData/fatima/ForSam/monolayer1/C1-20210708_MCF10ARAB5A_H2BGFP_Monolayer_Doxy_withoutDoxy.czi - 20210708_MCF10ARAB5A_H2BGFP_Monolayer_Doxy_withoutDoxy.czi #19_Results/PIV_roi_velocity_text';
 pixelsize = 0.65 * 16; % pixel size in microns multiply half the PIV window size
-timeinterval = 600/60/60; % time in hours
+timeinterval = 600/60/60 % time in hours
 plotting = 1
 
 files = dir(path);
@@ -31,7 +31,7 @@ end
 
 if plotting
     plot(time, vrms,'o','MarkerFaceColor',[0, 0.4470, 0.7410])
-    axis([0 23 0 10])
+    axis([0 23 0 60])
     axis square
     title('V_R_M_S','FontSize',16)
     xlabel('Time (hours)','FontSize',14)
@@ -94,26 +94,3 @@ if plotting
     title('Mean Square Displacement','FontSize',16)
     xlabel('\DeltaT')
 end
-
-%%
-tj = trajectories(vectorfield);
-tj(tj==0) = NaN;
-% Give the video a name! 
-myVideo = VideoWriter('monolayer.avi');
-myVideo.FrameRate = 10;
-open(myVideo);
-figure('Position',[200,200,800,800])
-
-for i = 1:126-10
-    if i < 10
-        plot(tj(1:i,1:2:end),tj(1:i,2:2:end))
-        axis([0 63 0 63])
-    else
-        plot(tj(i-9:i,1:2:end),tj(i-9:i,2:2:end))
-        axis([0 63 0 63])
-    end
-    pause(0.02) 
-    frame = getframe(gcf);
-    writeVideo(myVideo,frame);
-end
-close(myVideo);
