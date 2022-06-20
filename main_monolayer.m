@@ -99,5 +99,5 @@ end
 tj = trajectories(vectorfield);
 tj(tj==0) = NaN;
 % Give the video a name!
-Linevideo(tj,'vid.avi',10)
+Linevideo(tj,'vidlines.avi',10)
 

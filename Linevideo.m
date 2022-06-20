@@ -21,7 +21,7 @@ for i = 1:size(tj,1)-tjlength
             idx = find(colpos==j);
             toplotx = tj(:,idx.*2-1);
             toploty = tj(:,idx.*2);
-            plot(toplotx(1:i,:),toploty(1:i,:),'Color',cmap(j,:))
+            plot(toplotx(1:i,:),toploty(1:i,:),'Color',cmap(j,:),'LineWidth',2)
             hold on
         end
         hold off
@@ -39,7 +39,7 @@ for i = 1:size(tj,1)-tjlength
             idx = find(colpos==j);
             toplotx = tj(:,idx.*2-1);
             toploty = tj(:,idx.*2);
-            plot(toplotx(i-(tjlength-1):i,:),toploty(i-(tjlength-1):i,:),'Color',cmap(j,:))
+            plot(toplotx(i-(tjlength-1):i,:),toploty(i-(tjlength-1):i,:),'Color',cmap(j,:),'LineWidth',2)
             hold on
         end
         hold off

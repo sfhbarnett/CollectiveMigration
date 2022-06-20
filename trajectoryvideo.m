@@ -16,10 +16,10 @@ figure('Position',[200,200,800,800])
 
 for i = 2:126-10
     if i < 10
-        plot(trajectories(1:i,1:2:end),trajectories(1:i,2:2:end))
+        plot(trajectories(1:i,1:2:end),trajectories(1:i,2:2:end),'LineWidth',2)
         axis([0 63 0 63])
     else
-        plot(trajectories(i-9:i,1:2:end),trajectories(i-9:i,2:2:end))
+        plot(trajectories(i-9:i,1:2:end),trajectories(i-9:i,2:2:end),'LineWidth',2)
         axis([0 63 0 63])
     end
     pause(0.02)
