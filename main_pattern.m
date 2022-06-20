@@ -116,23 +116,5 @@ end
 %%
 tj = trajectories(vectorfield);
 tj(tj==0) = NaN;
-%Change the name! Don't forget to adjust the axes!
-myVideo = VideoWriter('pattern.avi');
-myVideo.FrameRate = 10;
-open(myVideo);
-figure('Position',[200,200,800,800])
-
-for i = 2:126-10
-    if i < 10
-        plot(tj(1:i,1:2:end),tj(1:i,2:2:end))
-        axis([20 45 20 45])
-    else
-        plot(tj(i-9:i,1:2:end),tj(i-9:i,2:2:end))
-        axis([20 45 20 45])
-    end
-    pause(0.02)
-    frame = getframe(gcf);
-    writeVideo(myVideo,frame);
-    
-end
-close(myVideo);
+% Give the video a name!
+Linevideo(tj,'vid.avi',10)
