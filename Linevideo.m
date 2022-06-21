@@ -46,7 +46,6 @@ for i = 1:size(tj,1)-tjlength
         %plot(tj(i-9:i,1:2:end),tj(i-9:i,2:2:end))
         axis([0 max(tj(1,:)) 0 max(tj(1,:))])
     end
-    pause(0.02) 
     frame = getframe(gcf);
     writeVideo(myVideo,frame);
 end
