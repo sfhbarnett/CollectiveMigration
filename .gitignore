@@ -1,3 +1,4 @@
 *.avi
 *.asv
 *.mat
+.DS_Store
