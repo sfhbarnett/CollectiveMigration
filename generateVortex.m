@@ -1,4 +1,4 @@
-function [vectorfield] = generateVortex(sX,sY,randomness)
+function [vectorfield] = generateVortex(sX,sY,cx,cy,randomness)
 %Generates a vectorfield with a vortex centred in the middle
 %   INPUTS:
 %   sX - size of field in X
@@ -10,8 +10,8 @@ function [vectorfield] = generateVortex(sX,sY,randomness)
 
 fieldu = zeros(sX,sY);
 fieldv = zeros(sX,sY);
-cx = sX/2;
-cy = sY/2;
+%cx = 30;
+%cy = 30;
 
 for i = 1:sX
     for j = 1:sY

@@ -41,7 +41,7 @@ elseif angle >=90 && angle < 180
 elseif angle >= 180 && angle < 270
     xcomponent = 1-(angle-180)/90;
     ycomponent = 1-xcomponent;
-elseif angle > 270
+elseif angle >= 270
     xcomponent = -1*((angle-270)/90);
     ycomponent = 1-(-1*xcomponent);
 end
