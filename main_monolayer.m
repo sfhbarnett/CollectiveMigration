@@ -1,10 +1,10 @@
 %% Load in data
 clear
 
-path = '/Users/sbarnett/Documents/PIVData/fatima/ForSam/monolayer1/C1-20210708_MCF10ARAB5A_H2BGFP_Monolayer_Doxy_withoutDoxy.czi - 20210708_MCF10ARAB5A_H2BGFP_Monolayer_Doxy_withoutDoxy.czi #19_Results/PIV_roi_velocity_text';
+path = '/Users/sbarnett/Documents/PIVData/fatima/Invasion_migrating_edges/blurred/200_D_C1_Phase_20220505_MCF10ARab5A_H2BGFP_Invasion-01-Scene-021-P22-A02_Results/PIV_roi_velocity_text';
 pixelsize = 0.65 * 16; % pixel size in microns multiply half the PIV window size
 timeinterval = 600/60/60; % time in hours
-plotting = 1
+plotting = 1;
 
 files = dir(path);
 
@@ -99,5 +99,5 @@ end
 tj = trajectories(vectorfield);
 tj(tj==0) = NaN;
 % Give the video a name!
-Linevideo(tj,'vidlines.avi',10)
+Linevideo(tj,'vidlines.avi',10,images)
 
