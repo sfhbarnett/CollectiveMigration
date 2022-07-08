@@ -96,6 +96,18 @@ if plotting
 end
 
 %%
+path = '/Users/sbarnett/Documents/PIVData/fatima/Invasion_migrating_edges/blurred/200_D_C1_Phase_20220505_MCF10ARab5A_H2BGFP_Invasion-01-Scene-021-P22-A02.tif';
+info = imfinfo(path);
+numberOfPages = length(info);
+
+for k = 1 : numberOfPages
+    % Read the kth image in this multipage tiff file.
+    thisPage(:,:,k) = imread(path, k);
+    % Now process thisPage somehow...
+end	
+%%
+
+
 tj = trajectories(vectorfield);
 tj(tj==0) = NaN;
 % Give the video a name!
