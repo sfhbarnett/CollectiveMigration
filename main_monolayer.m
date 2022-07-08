@@ -101,7 +101,7 @@ info = imfinfo(path);
 numberOfPages = length(info);
 
 for k = 1 : numberOfPages
-    thisPage(:,:,k) = imread(path, k);
+    images(:,:,k) = imread(path, k);
 end	
 %%
 

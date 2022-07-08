@@ -113,6 +113,17 @@ if plotting
     xlabel('\DeltaT')
 end
 
+
+%% Read in images to overlay on video
+path = '/Users/sbarnett/Documents/PIVData/fatima/Invasion_migrating_edges/blurred/200_D_C1_Phase_20220505_MCF10ARab5A_H2BGFP_Invasion-01-Scene-021-P22-A02.tif';
+info = imfinfo(path);
+numberOfPages = length(info);
+
+for k = 1 : numberOfPages
+    images(:,:,k) = imread(path, k);
+end	
+
+
 %%
 tj = trajectories(vectorfield);
 tj(tj==0) = NaN;
