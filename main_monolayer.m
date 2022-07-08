@@ -101,9 +101,7 @@ info = imfinfo(path);
 numberOfPages = length(info);
 
 for k = 1 : numberOfPages
-    % Read the kth image in this multipage tiff file.
     thisPage(:,:,k) = imread(path, k);
-    % Now process thisPage somehow...
 end	
 %%
 

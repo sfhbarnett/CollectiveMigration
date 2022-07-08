@@ -59,5 +59,6 @@ for i = 0:35
 end
 hold off
 axis([0 size(f1,1), 0 size(f1,2)])
+axis equal tight
 %axis off;
 

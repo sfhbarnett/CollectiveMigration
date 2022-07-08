@@ -5,6 +5,8 @@ myVideo = VideoWriter(filename);
 myVideo.FrameRate = 10;
 open(myVideo);
 figure('Position',[200,200,800,800])
+%change thickness
+linewidth = 2;
 
 maxspeed = 0.2;
 cmap = jet(36);
@@ -24,7 +26,7 @@ for i = 1:size(tj,1)-tjlength
             idx = find(colpos==j);
             toplotx = tj(:,idx.*2-1);
             toploty = tj(:,idx.*2);
-            plot(toplotx(1:i,:).*16,toploty(1:i,:).*16,'Color',cmap(j,:),'LineWidth',2)
+            plot(toplotx(1:i,:).*16,toploty(1:i,:).*16,'Color',cmap(j,:),'LineWidth',linewidth)
             hold on
         end
         hold off
@@ -42,7 +44,7 @@ for i = 1:size(tj,1)-tjlength
             idx = find(colpos==j);
             toplotx = tj(:,idx.*2-1);
             toploty = tj(:,idx.*2);
-            plot(toplotx(i-(tjlength-1):i,:).*16,toploty(i-(tjlength-1):i,:).*16,'Color',cmap(j,:),'LineWidth',2)
+            plot(toplotx(i-(tjlength-1):i,:).*16,toploty(i-(tjlength-1):i,:).*16,'Color',cmap(j,:),'LineWidth',linewidth)
             hold on
         end
         hold off
