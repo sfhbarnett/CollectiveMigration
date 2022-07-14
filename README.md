@@ -15,4 +15,8 @@ Visualisation of cell movement (Output will be higher resoltion).
 
 <img src="https://user-images.githubusercontent.com/45679976/175018563-fde659dc-834b-4715-9932-359bd6986e54.gif" width="400">
 
+<img width="500" alt="image" src="https://user-images.githubusercontent.com/45679976/179063506-2910ea34-1347-40d0-8395-047604e05d8a.png">
+<img width="500" alt="image" src="https://user-images.githubusercontent.com/45679976/179063919-a298c64e-1734-4c9a-b026-a6e321b60e81.png">
+
+
 Requires natural sort for matlab: https://www.mathworks.com/matlabcentral/fileexchange/47434-natural-order-filename-sort
