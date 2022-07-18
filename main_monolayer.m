@@ -1,21 +1,25 @@
 %% Load in data
 clear
 
-path = '/Users/sbarnett/Documents/PIVData/fatima/Invasion_migrating_edges/blurred/200_D_C1_Phase_20220505_MCF10ARab5A_H2BGFP_Invasion-01-Scene-021-P22-A02_Results/PIV_roi_velocity_text';
+path = '/Users/sbarnett/Documents/PIVData/fatima/ForSam/monolayer1/C1-20210708_MCF10ARAB5A_H2BGFP_Monolayer_Doxy_withoutDoxy.czi - 20210708_MCF10ARAB5A_H2BGFP_Monolayer_Doxy_withoutDoxy.czi #19_Results/';
+tifpath = '/Users/sbarnett/Documents/PIVData/fatima/Invasion_migrating_edges/blurred/200_D_C1_Phase_20220505_MCF10ARab5A_H2BGFP_Invasion-01-Scene-021-P22-A02.tif';
+
 pixelsize = 0.65 * 16; % pixel size in microns multiply half the PIV window size
 timeinterval = 600/60/60; % time in hours
 plotting = 1;
 
-files = dir(path);
+files = dir(fullfile(path,'PIV_roi_velocity_text'));
 
+%Clean up file names and natural sort
 names = {};
 for i=3:size(files,1)
     names{i-2} = files(i).name;
 end
 filessort = natsort(names).';
 
+%Read in the vector fields
 for i = 1:size(filessort,1)
-    vectorfield(:,:,i) = csvread(fullfile(path,filessort{i}));
+    vectorfield(:,:,i) = csvread(fullfile(path,'PIV_roi_velocity_text',filessort{i}));
 end
 
 time = (1:size(names,2)).*timeinterval;
@@ -87,7 +91,7 @@ B = MSDfit.B;
 ci = confint(MSDfit,.95);
 da = ci(2,1)-ci(1,1);
 db = ci(2,2)-ci(1,2);
-L_p = sqrt(A)./B;
+persistence_length = sqrt(A)./B;
 
 if plotting
     loglog(xtime,mMSD)
@@ -95,19 +99,17 @@ if plotting
     xlabel('\DeltaT')
 end
 
-%%
-path = '/Users/sbarnett/Documents/PIVData/fatima/Invasion_migrating_edges/blurred/200_D_C1_Phase_20220505_MCF10ARab5A_H2BGFP_Invasion-01-Scene-021-P22-A02.tif';
-info = imfinfo(path);
+%% read in raw images
+
+info = imfinfo(tifpath);
 numberOfPages = length(info);
 
 for k = 1 : numberOfPages
     images(:,:,k) = imread(path, k);
 end	
-%%
-
+%% Generate video with trails
 
 tj = trajectories(vectorfield);
 tj(tj==0) = NaN;
 % Give the video a name!
-Linevideo(tj,'vidlines.avi',10,images)
-
+Linevideo(tj,fullfile(path,'vidlines.avi'),10,images)

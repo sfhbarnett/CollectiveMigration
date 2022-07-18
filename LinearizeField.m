@@ -1,5 +1,6 @@
 function [rotationcomponent,tangentcomponent] = LinearizeField(vectorfield,cx,cy)
-%LINEARIZEFIELD Summary of this function goes here
+%Gives the normalised field that has been converted to rotational space to
+%linear space
 %   Detailed explanation goes here
 
 %Reserve memory for new vector components

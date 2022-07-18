@@ -1,28 +1,33 @@
 %% Load in data
 clear
 
-path = '/Users/sbarnett/Documents/PIVData/fatima/200_D_C1_Phase_20220307_MCF10ARab5A_H2BGFP_uPatterns-01-Scene-04-P5-A01_cr_Results/PIV_roi_velocity_text';
+path = '/Users/sbarnett/Documents/PIVData/fatima/200_D_C1_Phase_20220307_MCF10ARab5A_H2BGFP_uPatterns-01-Scene-04-P5-A01_cr_Results/';
+tifpath = '/Users/sbarnett/Documents/PIVData/fatima/Invasion_migrating_edges/blurred/200_D_C1_Phase_20220505_MCF10ARab5A_H2BGFP_Invasion-01-Scene-021-P22-A02.tif';
+
 pixelsize = 0.65 * 16; % pixel size in microns multiply half the PIV window size
 timeinterval = 600/60/60; % time in hours
 plotting = 1;
 
-files = dir(path);
+%Clean files and natural sort
+files = dir(fullfile(path,'PIV_roi_velocity_text'));
 names = {};
 for i=3:size(files,1)
     names{i-2} = files(i).name;
 end
 filessort = natsort(names).';
 
+% Read in the vectorfields
 for i = 1:size(filessort,1)
-    vectorfield(:,:,i) = csvread(fullfile(path,filessort{i}));
+    vectorfield(:,:,i) = csvread(fullfile(path,'PIV_roi_velocity_text',filessort{i}));
 end
 
 time = (1:size(names,2)).*timeinterval;
 
 %% Linearise Field - works
-%center x and y coordinates
-centerX = 32;
-centerY = 32;
+%Remove unconnected vectors
+vectorfield = cleanField(vectorfield);
+%center x and y coordinates, assumes no movement
+[centerX, centerY] = findCentre(vectorfield);
 %change scale of x,y coordinates
 vectorfield(:,1,:) = vectorfield(:,1,:)./vectorfield(1,1,:);
 vectorfield(:,2,:) = vectorfield(:,2,:)./vectorfield(1,2,:);
@@ -54,11 +59,9 @@ end
 
 %% Calculate ROP
 
-ROP = RotationalOrderParameter(vectorfield)
-
 ROP = zeros([size(filessort,1),1]);
 for i = 1:size(filessort,1)
-    ROP(i) = RotationalOrderParameter(vectorfield(:,:,i))
+    ROP(i) = RotationalOrderParameter(vectorfield(:,:,i),centerX,centerY)
 end
 
 
@@ -112,20 +115,24 @@ if plotting
     title('Mean Square Displacement','FontSize',16)
     xlabel('\DeltaT')
 end
+%%
+DX = pixelsize*16
+x_n=((1:length(C))-1);
+f1=fit(x_n',y_C','a*exp(-abs(b*x).^c)','startpoint',[y_C(1) .01 1],'lower',[0 0 0],'upper',[inf inf 2]);
 
+L1=(DX./f1.b)*gamma(1/f1.c)./f1.c;
 
 %% Read in images to overlay on video
-path = '/Users/sbarnett/Documents/PIVData/fatima/Invasion_migrating_edges/blurred/200_D_C1_Phase_20220505_MCF10ARab5A_H2BGFP_Invasion-01-Scene-021-P22-A02.tif';
-info = imfinfo(path);
+info = imfinfo(tifpath);
 numberOfPages = length(info);
 
 for k = 1 : numberOfPages
-    images(:,:,k) = imread(path, k);
+    images(:,:,k) = imread(tifpath, k);
 end	
 
 
 %%
-tj = trajectories(vectorfield);
+%tj = trajectories(vectorfield);
 tj(tj==0) = NaN;
 % Give the video a name!
-Linevideo(tj,'vid.avi',10)
+Linevideo(tj,fullfile(path,'vidlines.avi'),10)

@@ -1,4 +1,4 @@
-function [ROP] = RotationalOrderParameter(vectorfield)
+function [ROP] = RotationalOrderParameter(vectorfield,cx,cy)
 %Calculates the rotational order parameter
 %   Takes as inpuy an mx4 matrix representing a vectorfield with columens
 %   x, y, u, v
@@ -11,12 +11,12 @@ fieldu = vectorfield(:,3);
 fieldv = vectorfield(:,4);
 
 %assumes rotation relative to center of field
-cx = max(fieldx)/2;
-cy = max(fieldy)/2;
+% cx = max(fieldx)/2;
+% cy = max(fieldy)/2;
 
 %Reserve space in memory
-rotationcomponent = NaN(cx*2,cy*2);
-tangentcomponent = NaN(cx*2,cy*2);
+rotationcomponent = NaN(sqrt(size(fieldx,1)),sqrt(size(fieldx,1)));
+tangentcomponent = NaN(sqrt(size(fieldx,1)),sqrt(size(fieldx,1)));
 
 for i = 1:size(fieldx,1)
     %Calculate the rotational and tangent components for each vector

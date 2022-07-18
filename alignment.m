@@ -12,6 +12,6 @@ upper = [vectorfield(:,3,1),vectorfield(:,4,1)] * meanvector.';
 
 lower = sqrt(vectorfield(:,3,1).^2+vectorfield(:,4,1).^2) * sqrt(meanvector(1)^2 +meanvector(2)^2);
 
-value = upper./lower
+value = upper./lower;
 end
 

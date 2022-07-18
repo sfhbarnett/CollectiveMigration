@@ -11,7 +11,7 @@
 
 
 
-function scaled_quiver2(x_coor,y_coor,uu,vv,f1,max_mag)
+function scaled_quiver2(x_coor,y_coor,uu,vv,max_mag)
 
            
 mag_u=sqrt((uu.^2)+(vv.^2));
@@ -43,7 +43,7 @@ clip_uy=clip_mag_u.*norm_uy;
 scl_ux=qv_scl.*clip_ux;
 scl_uy=qv_scl.*clip_uy;
 
-imagesc(f1);hold on;
+% imagesc(f1);hold on;
 % title(tit)
 %cla; imagesc(f1);hold on;
 colormap gray
@@ -58,7 +58,7 @@ for i = 0:35
   
 end
 hold off
-axis([0 size(f1,1), 0 size(f1,2)])
+% axis([0 size(f1,1), 0 size(f1,2)])
 axis equal tight
 %axis off;
 
