@@ -3,7 +3,7 @@
 
 clear
 
-path = '/Users/sbarnett/Documents/PIVData/fatima/ForSam/monolayer1/C1-20210708_MCF10ARAB5A_H2BGFP_Monolayer_Doxy_withoutDoxy.czi - 20210708_MCF10ARAB5A_H2BGFP_Monolayer_Doxy_withoutDoxy.czi #19_Results/PIV_roi_velocity_text';
+path = '/Users/sbarnett/Documents/PIVData/scratch/piv2/data-1_Results/PIV_roi_velocity_text';
 pixelsize = 0.65 * 16; % pixel size in microns multiply half the PIV window size
 timeinterval = 600/60/60 % time in hours
 plotting = 1
@@ -21,6 +21,14 @@ for i = 1:size(filessort,1)
 end
 
 time = (1:size(names,2)).*timeinterval;
+%%
+kymograph = zeros(size(ufield,1),size(time,2));
+for i = 1:size(vectorfield,3)
+    i
+    ufield = reshape(vectorfield(:,3,i),[sqrt(size(vectorfield,1)),sqrt(size(vectorfield,1))]);
+    kymograph(:,i) = mean(ufield);
+end
+imagesc(abs(kymograph).')
 
 %% Calculate vRMS through time - works
 
