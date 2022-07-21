@@ -1,11 +1,11 @@
 %% Load in data
 clear
 
-path = '/Users/sbarnett/Documents/PIVData/fatima/ForSam/monolayer1/C1-20210708_MCF10ARAB5A_H2BGFP_Monolayer_Doxy_withoutDoxy.czi - 20210708_MCF10ARAB5A_H2BGFP_Monolayer_Doxy_withoutDoxy.czi #19_Results/';
+path = '/Users/sbarnett/Documents/PIVData/fatima/ForSam/monolayer2/C1-20210708_MCF10ARAB5A_H2BGFP_Monolayer_Doxy_withoutDoxy.czi - 20210708_MCF10ARAB5A_H2BGFP_Monolayer_Doxy_withoutDoxy.czi #21_Results/';
 tifpath = '/Users/sbarnett/Documents/PIVData/fatima/Invasion_migrating_edges/blurred/200_D_C1_Phase_20220505_MCF10ARab5A_H2BGFP_Invasion-01-Scene-021-P22-A02.tif';
 
 pixelsize = 0.65 * 16; % pixel size in microns multiply half the PIV window size
-timeinterval = 600/60/60; % time in hours
+timeinterval = 10/60; % time in hours
 plotting = 1;
 
 files = dir(fullfile(path,'PIV_roi_velocity_text'));
@@ -28,14 +28,14 @@ time = (1:size(names,2)).*timeinterval;
 
 vrms = zeros([size(filessort,1),1]);
 for i = 1:size(filessort,1)
-    vrms(i) = vRMS(vectorfield(:,:,i))*pixelsize;
+    vrms(i) = vRMS(vectorfield(:,:,i));
 end
 
 
 
 if plotting
     plot(time, vrms,'o','MarkerFaceColor',[0, 0.4470, 0.7410])
-    axis([0 23 0 10])
+    axis([0 23 0 40])
     axis square
     title('V_R_M_S','FontSize',16)
     xlabel('Time (hours)','FontSize',14)
@@ -66,6 +66,7 @@ corel = Correlation(vectorfield, startframe, endframe);
 x=((1:length(corel))-1).*pixelsize; % create x axis
 f_=fit(x',corel','exp2'); %generate a double exponential fit
 F = f_.a*exp(f_.b*x) + f_.c*exp(f_.d*x); % create plotting data for the fit
+[Lcorr, delta1] = CorrelationLength(vectorfield,10,100,corel,x,pixelsize,f_)
 
 if plotting
     plot(x,corel./(f_.a +f_.c),'s'); %plot data scaled to fit

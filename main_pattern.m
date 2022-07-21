@@ -45,7 +45,7 @@ end
 
 vrms = zeros([size(filessort,1),1]);
 for i = 1:size(filessort,1)
-    vrms(i) = vRMS(linearfield(:,:,i))*pixelsize;
+    vrms(i) = vRMS(linearfield(:,:,i));
 end
 
 if plotting
@@ -84,6 +84,7 @@ corel = Correlation(linearfield, startframe, endframe);
 x=((1:length(corel))-1).*pixelsize; % create x axis
 f_=fit(x',corel','exp2'); %generate a double exponential fit
 F = f_.a*exp(f_.b*x) + f_.c*exp(f_.d*x); % create plotting data for the fit
+[Lcorr, delta1] = CorrelationLength(vectorfield,10,100,corel,x,pixelsize,f_)
 
 if plotting
     plot(x,corel./(f_.a +f_.c),'s'); %plot data scaled to fit
