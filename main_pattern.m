@@ -1,8 +1,8 @@
 %% Load in data
 clear
 
-path = '/Users/sbarnett/Documents/PIVData/fatima/200_D_C1_Phase_20220307_MCF10ARab5A_H2BGFP_uPatterns-01-Scene-04-P5-A01_cr_Results/';
-tifpath = '/Users/sbarnett/Documents/PIVData/fatima/Invasion_migrating_edges/blurred/200_D_C1_Phase_20220505_MCF10ARab5A_H2BGFP_Invasion-01-Scene-021-P22-A02.tif';
+path = '/Users/sbarnett/Downloads/cleanfields_example/200_WD_C1_20211108_MCF10ARab5A_H2BGFP_Invasion-Scene-33-P48-B01DC_BL_Results';
+tifpath = [path(1:end-9),'.tif'];
 
 pixelsize = 0.65 * 16; % pixel size in microns multiply half the PIV window size
 timeinterval = 600/60/60; % time in hours
@@ -21,10 +21,27 @@ for i = 1:size(filessort,1)
     vectorfield(:,:,i) = csvread(fullfile(path,'PIV_roi_velocity_text',filessort{i}));
 end
 
+info = imfinfo(tifpath);
+numberOfPages = length(info);
+
+for k = 1 : numberOfPages
+    images(:,:,k) = imread(tifpath, k);
+end	
+
+
 time = (1:size(names,2)).*timeinterval;
+
+width = max(vectorfield(:,1,1))/max(vectorfield(1,1,1));
+height = max(vectorfield(:,2,1))/max(vectorfield(1,2,1));
+nframes = size(vectorfield,3);
+squarex =reshape(vectorfield(:,1,:),[width,height,nframes]);
+squarey = reshape(vectorfield(:,2,:),[width,height,nframes]);
+squareu = reshape(vectorfield(:,3,:),[width,height,nframes]);
+squarev = reshape(vectorfield(:,4,:),[width,height,nframes]);
 
 %% Linearise Field - works
 %Remove unconnected vectors
+dX = vectorfield(1,1,1);
 vectorfield = cleanField(vectorfield);
 %center x and y coordinates, assumes no movement
 [centerX, centerY] = findCentre(vectorfield);
@@ -38,6 +55,9 @@ for i = 1:size(filessort,1)
     linearfield(:,3,i) = lfU(:);
     linearfield(:,4,i) = lfV(:);
 end
+
+vectorfield(:,1,:) = vectorfield(:,1,:).*dX;
+vectorfield(:,2,:) = vectorfield(:,2,:).*dX;
 
 %% Calculate vRMS through time - works
 % Check zeros dealt with properly
@@ -84,7 +104,7 @@ corel = Correlation(linearfield, startframe, endframe);
 x=((1:length(corel))-1).*pixelsize; % create x axis
 f_=fit(x',corel','exp2'); %generate a double exponential fit
 F = f_.a*exp(f_.b*x) + f_.c*exp(f_.d*x); % create plotting data for the fit
-[Lcorr, delta1] = CorrelationLength(vectorfield,10,100,corel,x,pixelsize,f_)
+[Lcorr, delta1] = CorrelationLength(vectorfield,startframe,endframe,corel,x,pixelsize,f_)
 
 if plotting
     plot(x,corel./(f_.a +f_.c),'s'); %plot data scaled to fit
@@ -117,17 +137,51 @@ if plotting
     xlabel('\DeltaT')
 end
 
-%% Read in images to overlay on video
-info = imfinfo(tifpath);
-numberOfPages = length(info);
-
-for k = 1 : numberOfPages
-    images(:,:,k) = imread(tifpath, k);
-end	
-
-
-%%
-%tj = trajectories(vectorfield);
+%% Line video
+tj = trajectories(vectorfield);
 tj(tj==0) = NaN;
-% Give the video a name!
 Linevideo(tj,fullfile(path,'vidlines.avi'),10)
+
+%% Create Alignment map
+frame = 1;
+threshold = 200; %Change this to set the amount of original frame that is visible
+
+alignmap = reshape(alignment(vectorfield(:,:,frame)),[width,height]);
+meanu = mean(mean(vectorfield(:,3,frame)));
+meanv = mean(mean(vectorfield(:,4,frame)));
+
+magnitude = sqrt(vectorfield(:,3,frame).^2 + vectorfield(:,4,frame).^2);
+meanmagnitude = sqrt(meanu^2 + meanv^2);
+
+scale = magnitude./meanmagnitude;
+im1 = images(:,:,frame);
+
+u = reshape(vectorfield(:,3,frame)./scale,[width,height]);
+v = reshape(vectorfield(:,4,frame)./scale,[width,height]);
+%Creates same style alignment map with scaled vectors, file -> save as -> .svg
+hf = figure;
+h1 = axes;
+p1 = imagesc(imresize(alignmap,size(images(:,:,frame))));
+axis equal tight
+h2 = axes;
+p2 = imagesc(im1>threshold,'AlphaData',im1>threshold)
+set(h2,'color','none','visible','off')
+colormap(h2,gray)
+axis equal tight
+hold on
+quiver(vectorfield(:,1,frame).*2,vectorfield(:,2,frame).*2,u(:),v(:),'k')
+
+%% Create Orientation map
+
+orientmap = reshape(orientation(vectorfield(:,:,1)),[sqrt(3969),sqrt(3969)]);
+%Creates same style orientation map, file -> save as -> .svg
+hf = figure;
+h1 = axes;
+p1 = imagesc(imresize(orientmap,size(images(:,:,frame)),'bilinear'));
+axis equal tight
+h2 = axes;
+p2 = imagesc(images(:,:,frame),'AlphaData',0.5)
+set(h2,'color','none','visible','off')
+axis equal tight
+colormap(h2,gray)
+colormap(h1,hsv)

@@ -35,10 +35,8 @@ plot(max(kymograph))
 
 vrms = zeros([size(filessort,1),1]);
 for i = 1:size(filessort,1)
-    vrms(i) = vRMS(vectorfield(:,:,i))*pixelsize;
+    vrms(i) = vRMS(vectorfield(:,:,i));
 end
-
-
 
 if plotting
     plot(time, vrms,'o','MarkerFaceColor',[0, 0.4470, 0.7410])

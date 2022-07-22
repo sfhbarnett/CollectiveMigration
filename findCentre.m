@@ -1,11 +1,11 @@
-function [cx,cy] = findCentre(vectorfield)
+function [cx,cy] = findCentre(vectorfield,width,height)
 %Finds the center of a circularly monolayer of cells. Takes a vectorfield as
 %an imput and outputs cx and cy, the centre of the monolayer. 
 
 
 %improvement, weight based on center of mass
-u = vectorfield(:,3,1);
-u = reshape(u,[63,63]);
+u = vectorfield(:,3);
+u = reshape(u,[width,height]);
 
 ulog = u~=0;
 
