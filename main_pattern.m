@@ -116,12 +116,6 @@ if plotting
     title('Mean Square Displacement','FontSize',16)
     xlabel('\DeltaT')
 end
-%%
-DX = pixelsize*16
-x_n=((1:length(C))-1);
-f1=fit(x_n',y_C','a*exp(-abs(b*x).^c)','startpoint',[y_C(1) .01 1],'lower',[0 0 0],'upper',[inf inf 2]);
-
-L1=(DX./f1.b)*gamma(1/f1.c)./f1.c;
 
 %% Read in images to overlay on video
 info = imfinfo(tifpath);
