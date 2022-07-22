@@ -49,7 +49,7 @@ vectorfield(:,1,:) = vectorfield(:,1,:)./vectorfield(1,1,:);
 vectorfield(:,2,:) = vectorfield(:,2,:)./vectorfield(1,2,:);
 linearfield = vectorfield;
 %linearise the fields
-for i = 1:size(filessort,1)
+for i = 1:nframes
     [centerX, centerY] = findCentre(vectorfield(:,:,i),width,height);
     [lfU,lfV] = LinearizeFieldScaled(vectorfield(:,:,i),centerX,centerY);
     linearfield(:,3,i) = lfU(:);
@@ -155,7 +155,7 @@ end
 
 %% Generate video with trails
 
-tj = trajectories(vectorfield);
+tj = trajectories(vectorfield,width,height);
 tj(tj==0) = NaN;
 Linevideo(tj,fullfile(path,'vidlines.avi'),10,images)
 

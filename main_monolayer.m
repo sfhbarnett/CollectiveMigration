@@ -44,8 +44,8 @@ squarev = reshape(vectorfield(:,4,:),[width,height,nframes]);
 
 %% Calculate vRMS through time - works
 
-vrms = zeros([nfiles,1]);
-for i = 1:size(nfiles,1)
+vrms = zeros([nframes,1]);
+for i = 1:size(nframes,1)
     vrms(i) = vRMS(vectorfield(:,:,i));
 end
 
@@ -59,8 +59,8 @@ if plotting
 end
 %% Calculate order paramter
 
-LOP = zeros([nfiles,1]);
-for i = 1:size(nfiles,1)
+LOP = zeros([nframes,1]);
+for i = 1:size(nframes,1)
     LOP(i) = LinearOrderParameter(vectorfield(:,:,i));
 end
 
@@ -119,7 +119,7 @@ end
 
 %% Generate video with trails
 
-tj = trajectories(vectorfield);
+tj = trajectories(vectorfield,width,height);
 tj(tj==0) = NaN;
 Linevideo(tj,fullfile(path,'vidlines.avi'),10,images)
 

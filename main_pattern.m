@@ -50,7 +50,7 @@ vectorfield(:,1,:) = vectorfield(:,1,:)./vectorfield(1,1,:);
 vectorfield(:,2,:) = vectorfield(:,2,:)./vectorfield(1,2,:);
 linearfield = vectorfield;
 %linearise the fields
-for i = 1:size(filessort,1)
+for i = 1:nframes
     [lfU,lfV] = LinearizeFieldScaled(vectorfield(:,:,i),centerX,centerY);
     linearfield(:,3,i) = lfU(:);
     linearfield(:,4,i) = lfV(:);
@@ -63,8 +63,8 @@ vectorfield(:,2,:) = vectorfield(:,2,:).*dX;
 % Check zeros dealt with properly
 % vrms on normal field will equal zero, all movement averages
 
-vrms = zeros([size(filessort,1),1]);
-for i = 1:size(filessort,1)
+vrms = zeros([nframes,1]);
+for i = 1:nframes
     vrms(i) = vRMS(linearfield(:,:,i));
 end
 
@@ -79,7 +79,7 @@ end
 
 %% Calculate ROP
 
-ROP = zeros([size(filessort,1),1]);
+ROP = zeros([nframes,1]);
 for i = 1:size(filessort,1)
     ROP(i) = RotationalOrderParameter(vectorfield(:,:,i),centerX,centerY)
 end
@@ -138,7 +138,7 @@ if plotting
 end
 
 %% Line video
-tj = trajectories(vectorfield);
+tj = trajectories(vectorfield,width,height);
 tj(tj==0) = NaN;
 Linevideo(tj,fullfile(path,'vidlines.avi'),10)
 

@@ -1,4 +1,4 @@
-function trajectories = trajectories(vectorfield)
+function trajectories = trajectories(vectorfield,width,height)
 
 trajectories = [];
 counter = 1;
@@ -16,8 +16,8 @@ for j = 1:size(vectorfield,1)
     trajectory = [x,y];
     lostvector = 0;
     for i = 2:size(vectorfield,3)
-        ufield = reshape(vectorfield(:,3,i-1),[63,63]);
-        vfield = reshape(vectorfield(:,4,i-1),[63,63]);
+        ufield = reshape(vectorfield(:,3,i-1),[width,height]);
+        vfield = reshape(vectorfield(:,4,i-1),[width,height]);
         newx = round(trajectory(i-1,1));
         newy = round(trajectory(i-1,2));
         
@@ -26,11 +26,11 @@ for j = 1:size(vectorfield,1)
         %                 break
         %             end
         
-        if newx > 63
-            newx = 63;
+        if newx > width
+            newx = width;
         end
-        if newy > 63
-            newy = 63;
+        if newy > height
+            newy = height;
         end
         if newx < 1
             newx = 1;
@@ -55,23 +55,23 @@ for j = 1:size(vectorfield,1)
 end
 
 for t = 1:size(vectorfield,3)
-    ufield(:,:,t) = reshape(vectorfield(:,3,t),[63,63]);
-    vfield(:,:,t) = reshape(vectorfield(:,4,t),[63,63]);
+    ufield(:,:,t) = reshape(vectorfield(:,3,t),[width,height]);
+    vfield(:,:,t) = reshape(vectorfield(:,4,t),[width,height]);
 end
 
-uind = 1:63;
-vind = 1:63;
+uind = 1:width;
+vind = 1:height;
 [uind,vind] = meshgrid(uind,vind);
 
 for t = 2:size(vectorfield,3)
     tjs = trajectories(t,:);
     t
     xcoord = tjs(1:2:end).';
-    xcoord = repmat(xcoord,1,63,63);
+    xcoord = repmat(xcoord,1,width,height);
     xcoord = permute(xcoord,[3,2,1]);
     
     ycoord = tjs(2:2:end).';
-    ycoord = repmat(ycoord,1,63,63);
+    ycoord = repmat(ycoord,1,width,heigth);
     ycoord = permute(ycoord,[3,2,1]);
     
     diffx = (xcoord-uind).^2;
@@ -94,11 +94,11 @@ for t = 2:size(vectorfield,3)
 %                 break
 %             end
             
-            if newx > 63
-                newx = 63;
+            if newx > width
+                newx = width;
             end
-            if newy > 63
-                newy = 63;
+            if newy > height
+                newy = height;
             end
             if newx < 1
                 newx = 1;
