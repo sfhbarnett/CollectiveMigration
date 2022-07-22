@@ -2,12 +2,11 @@
 clear
 
 path = '/Users/sbarnett/Downloads/cleanfields_example/200_WD_C1_20211108_MCF10ARab5A_H2BGFP_Invasion-Scene-33-P48-B01DC_BL_Results/';
-tifpath = [path(1:end-9),'.tif'];
+tifpath = [path(1:end-8),'.tif'];
 
 pixelsize = 0.65 * 32; % pixel size in microns multiply half the PIV window size
 timeinterval = 600/60/60; % time in hours
 plotting = 1;
-
 %Clean files and natural sort
 files = dir(fullfile(path,'PIV_roi_velocity_text'));
 names = {};

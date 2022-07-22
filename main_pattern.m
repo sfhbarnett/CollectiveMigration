@@ -2,7 +2,7 @@
 clear
 
 path = '/Users/sbarnett/Downloads/cleanfields_example/200_WD_C1_20211108_MCF10ARab5A_H2BGFP_Invasion-Scene-33-P48-B01DC_BL_Results';
-tifpath = [path(1:end-9),'.tif'];
+tifpath = [path(1:end-8),'.tif'];
 
 pixelsize = 0.65 * 16; % pixel size in microns multiply half the PIV window size
 timeinterval = 600/60/60; % time in hours
@@ -44,7 +44,7 @@ squarev = reshape(vectorfield(:,4,:),[width,height,nframes]);
 dX = vectorfield(1,1,1);
 vectorfield = cleanField(vectorfield);
 %center x and y coordinates, assumes no movement
-[centerX, centerY] = findCentre(vectorfield);
+[centerX, centerY] = findCentre(vectorfield,width,height);
 %change scale of x,y coordinates
 vectorfield(:,1,:) = vectorfield(:,1,:)./vectorfield(1,1,:);
 vectorfield(:,2,:) = vectorfield(:,2,:)./vectorfield(1,2,:);

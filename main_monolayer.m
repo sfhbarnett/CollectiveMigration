@@ -3,7 +3,7 @@ clear
 
 %Path to folder where PIV_roi_velocity_text files are
 path = '/Users/sbarnett/Documents/PIVData/fatima/ForSam/monolayer2/C1-20210708_MCF10ARAB5A_H2BGFP_Monolayer_Doxy_withoutDoxy.czi - 20210708_MCF10ARAB5A_H2BGFP_Monolayer_Doxy_withoutDoxy.czi #21_Results/';
-tifpath = [path(1:end-9),'.tif'];
+tifpath = [path(1:end-8),'.tif'];
 
 pixelsize = 0.65 * 16; % pixel size in microns multiply half the PIV window size
 timeinterval = 10/60; % time in hours
@@ -60,7 +60,7 @@ end
 %% Calculate order paramter
 
 LOP = zeros([nframes,1]);
-for i = 1:size(nframes,1)
+for i = 1:nframes
     LOP(i) = LinearOrderParameter(vectorfield(:,:,i));
 end
 
