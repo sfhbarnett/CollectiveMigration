@@ -48,7 +48,7 @@ end
 
 vrms = zeros([size(filessort,1),1]);
 for i = 1:size(filessort,1)
-    vrms(i) = vRMS(vectorfield(:,:,i));
+    vrms(i) = vRMS(v(:,:,i));
 end
 
 if plotting

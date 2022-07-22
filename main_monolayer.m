@@ -107,7 +107,7 @@ info = imfinfo(tifpath);
 numberOfPages = length(info);
 
 for k = 1 : numberOfPages
-    images(:,:,k) = imread(path, k);
+    images(:,:,k) = imread(tifpath, k);
 end	
 %% Generate video with trails
 
