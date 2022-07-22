@@ -36,6 +36,8 @@ v = cleanField(vectorfield);
 path = '/Users/sbarnett/Downloads/cleanfields_example/cleanfields';
 mkdir(path)
 for frame = 1:156
+    frame
+    % fix colorquiver
     colorquiver(v(:,1,frame),v(:,2,frame),v(:,3,frame),v(:,4,frame),tifstack(:,:,frame),0.5)
     F = getframe(gca);
     im = frame2im(F);
@@ -60,3 +62,5 @@ if plotting
     ylabel('V_R_M_S [\mum/hour]','FontSize',14)
 end
 
+
+COMPLETE

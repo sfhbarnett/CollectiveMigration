@@ -3,7 +3,7 @@ clear
 
 %Path to folder where PIV_roi_velocity_text files are
 path = '/Users/sbarnett/Documents/PIVData/fatima/ForSam/monolayer2/C1-20210708_MCF10ARAB5A_H2BGFP_Monolayer_Doxy_withoutDoxy.czi - 20210708_MCF10ARAB5A_H2BGFP_Monolayer_Doxy_withoutDoxy.czi #21_Results/';
-tifpath = '/Users/sbarnett/Documents/PIVData/fatima/Invasion_migrating_edges/blurred/200_D_C1_Phase_20220505_MCF10ARab5A_H2BGFP_Invasion-01-Scene-021-P22-A02.tif';
+tifpath = '/Users/sbarnett/Documents/PIVData/fatima/ForSam/monolayer2/C1-20210708_MCF10ARAB5A_H2BGFP_Monolayer_Doxy_withoutDoxy.czi - 20210708_MCF10ARAB5A_H2BGFP_Monolayer_Doxy_withoutDoxy.czi #21.tif';
 
 pixelsize = 0.65 * 16; % pixel size in microns multiply half the PIV window size
 timeinterval = 10/60; % time in hours
@@ -113,5 +113,43 @@ end
 
 tj = trajectories(vectorfield);
 tj(tj==0) = NaN;
-% Give the video a name!
 Linevideo(tj,fullfile(path,'vidlines.avi'),10,images)
+
+%% Create Alignment map
+alignmap = reshape(alignment(vectorfield(:,:,1)),[sqrt(3969),sqrt(3969)]);
+meanu = mean(mean(vectorfield(:,3,1)));
+meanv = mean(mean(vectorfield(:,4,1)));
+
+magnitude = sqrt(vectorfield(:,3,1).^2 + vectorfield(:,4,1).^2);
+meanmagnitude = sqrt(meanu^2 + meanv^2);
+
+scale = magnitude./meanmagnitude;
+
+u = reshape(vectorfield(:,3,1)./scale,[sqrt(3969),sqrt(3969)]);
+v = reshape(vectorfield(:,4,1)./scale,[sqrt(3969),sqrt(3969)]);
+%Creates same style alignment map with scaled vectors, file -> save as -> .svg
+hf = figure;
+h1 = axes;
+p1 = imagesc(imresize(alignmap,size(images(:,:,1))));
+axis equal tight
+h2 = axes;
+p2 = imagesc(im1>160,'AlphaData',im1>160)
+set(h2,'color','none','visible','off')
+colormap(h2,gray)
+axis equal tight
+hold on
+quiver(vectorfield(:,1,1),vectorfield(:,2,1),u(:),v(:),'k')
+
+%% Create Orientation map
+
+orientmap = reshape(orientation(vectorfield(:,:,1)),[sqrt(3969),sqrt(3969)]);
+hf = figure;
+h1 = axes;
+p1 = imagesc(imresize(orientmap,size(images(:,:,1)),'bilinear'));
+axis equal tight
+h2 = axes;
+p2 = imagesc(images(:,:,1),'AlphaData',0.5)
+set(h2,'color','none','visible','off')
+axis equal tight
+colormap(h2,gray)
+colormap(h1,hsv)
