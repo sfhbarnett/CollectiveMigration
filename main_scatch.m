@@ -22,7 +22,7 @@ end
 
 time = (1:size(names,2)).*timeinterval;
 %%
-kymograph = zeros(size(ufield,1),size(time,2));
+kymograph = zeros(sqrt(size(vectorfield,1)),size(time,2));
 for i = 1:size(vectorfield,3)
     i
     ufield = reshape(vectorfield(:,3,i),[sqrt(size(vectorfield,1)),sqrt(size(vectorfield,1))]);
