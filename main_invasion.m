@@ -40,7 +40,7 @@ squarev = reshape(vectorfield(:,4,:),[width,height,nframes]);
 %% Linearise Field - works
 %Remove unconnected vectors
 dX = vectorfield(1,1,1);
-vectorfield = cleanField(vectorfield);
+vectorfield = cleanField(vectorfield,width/2,height/2);
 %center x and y coordinates, assumes no movement
 [centerX, centerY] = findCentre(vectorfield(:,:,i),width,height);
 %change scale of x,y coordinates

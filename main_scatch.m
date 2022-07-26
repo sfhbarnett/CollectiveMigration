@@ -21,6 +21,24 @@ for i = 1:size(filessort,1)
 end
 
 time = (1:size(names,2)).*timeinterval;
+
+width = max(vectorfield(:,1,1))/max(vectorfield(1,1,1));
+height = max(vectorfield(:,2,1))/max(vectorfield(1,2,1));
+nframes = size(vectorfield,3);
+squarex =reshape(vectorfield(:,1,:),[width,height,nframes]);
+squarey = reshape(vectorfield(:,2,:),[width,height,nframes]);
+squareu = reshape(vectorfield(:,3,:),[width,height,nframes]);
+squarev = reshape(vectorfield(:,4,:),[width,height,nframes]);
+
+left = cleanField(vectorfield,5,5);
+right = cleanField(vectorfield,width-5,height-5);
+
+%%
+
+for t = 1:103
+    quiver(left(:,1,t),left(:,2,t),left(:,3,t),left(:,4,t),1.5)
+    pause(0.3)
+end
 %%
 kymograph = zeros(sqrt(size(vectorfield,1)),size(time,2));
 for i = 1:size(vectorfield,3)
@@ -33,8 +51,8 @@ figure
 plot(max(kymograph))
 %% Calculate vRMS through time - works
 
-vrms = zeros([size(filessort,1),1]);
-for i = 1:size(filessort,1)
+vrms = zeros([nframes,1]);
+for i = 1:nframes
     vrms(i) = vRMS(vectorfield(:,:,i));
 end
 
@@ -48,13 +66,19 @@ if plotting
 end
 %% Calculate order paramter
 
-LOP = zeros([size(filessort,1),1]);
-for i = 1:size(filessort,1)
+LOPL = zeros([nframes,1]);
+LOPR = zeros([nframes,1]);
+LOP = zeros([nframes,1]);
+for i = 1:nframes
+    LOPL(i) = LinearOrderParameter(left(:,:,i));
+    LOPR(i) = LinearOrderParameter(right(:,:,i));
     LOP(i) = LinearOrderParameter(vectorfield(:,:,i));
 end
 
 if plotting
-    plot(time,LOP)
+    plot(time,LOPL)
+    hold on
+    plot(time,LOPR)
     axis([0 23 0 1])
     axis square
     title('Linear Order Parameter','FontSize',16)
@@ -71,6 +95,7 @@ corel = Correlation(vectorfield, startframe, endframe);
 x=((1:length(corel))-1).*pixelsize; % create x axis
 f_=fit(x',corel','exp2'); %generate a double exponential fit
 F = f_.a*exp(f_.b*x) + f_.c*exp(f_.d*x); % create plotting data for the fit
+[Lcorr, delta1] = CorrelationLength(vectorfield,startframe,endframe,corel,x,pixelsize,f_)
 
 if plotting
     plot(x,corel./(f_.a +f_.c),'s'); %plot data scaled to fit

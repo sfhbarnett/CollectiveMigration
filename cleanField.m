@@ -1,4 +1,4 @@
-function [vectorfield] = cleanField(vectorfield)
+function [vectorfield] = cleanField(vectorfield,cx,cy)
 %Removes unconnected objects in the field ie background. Assumes that
 %object of interest is in the middle of the scene.
 %   Takes in a vectorfield v[x,y,u,v]
@@ -18,7 +18,7 @@ for t = 1:size(vectorfield,3)
     % see if the center is in a particuler convex hull
     c = 1;
     for blob = 1:size(convexhulls,1)
-        result = inpolygon(size(u,1)/2,size(u,2)/2,convexhulls(blob).ConvexHull(:,1),convexhulls(blob).ConvexHull(:,2));
+        result = inpolygon(cx,cy,convexhulls(blob).ConvexHull(:,1),convexhulls(blob).ConvexHull(:,2));
         if result == 1;
             break
         end

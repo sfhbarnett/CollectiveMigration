@@ -4,8 +4,8 @@ function [value] = alignment(vectorfield)
 %   a value of -1 indicates perfect anticorrelation
 %   Input is an Mx4 field of form [x,y,u,v]
 
-averageU = mean(vectorfield(:,3));
-averageV = mean(vectorfield(:,4));
+averageU = mean(vectorfield(:,3),'omitnan');
+averageV = mean(vectorfield(:,4),'omitnan');
 
 meanvector = [averageU,averageV];
 upper = [vectorfield(:,3,1),vectorfield(:,4,1)] * meanvector.';

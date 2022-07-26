@@ -2,7 +2,7 @@
 clear
 
 %Path to folder where PIV_roi_velocity_text files are
-path = '/Users/sbarnett/Documents/PIVData/fatima/ForSam/monolayer2/C1-20210708_MCF10ARAB5A_H2BGFP_Monolayer_Doxy_withoutDoxy.czi - 20210708_MCF10ARAB5A_H2BGFP_Monolayer_Doxy_withoutDoxy.czi #21_Results/';
+path = '/Users/sbarnett/Documents/PIVData/fatima/ForSam/monolayer1/C1-20210708_MCF10ARAB5A_H2BGFP_Monolayer_Doxy_withoutDoxy.czi - 20210708_MCF10ARAB5A_H2BGFP_Monolayer_Doxy_withoutDoxy.czi #19_Results';
 tifpath = [path(1:end-8),'.tif'];
 
 pixelsize = 0.65 * 16; % pixel size in microns multiply half the PIV window size
@@ -99,7 +99,7 @@ end
 %curtailing
 
 msd = MSD(vectorfield);
-mMSD = mean(msd,1).*pixelsize^2;
+mMSD = mean(msd,1);
 xtime = ((1:size(mMSD,2)).*timeinterval)'
 MSDfit = fit(xtime,mMSD','A*x.^2/(1+(B*x))','startpoint',[10 .5],'weight',1./xtime.^2);
 
@@ -111,9 +111,12 @@ db = ci(2,2)-ci(1,2);
 persistence_length = sqrt(A)./B;
 
 if plotting
-    loglog(xtime,mMSD)
+    loglog(xtime,mMSD,'o')
+    hold on
+    plot(xtime,MSDfit(xtime))
     title('Mean Square Displacement','FontSize',16)
-    xlabel('\DeltaT')
+    xlabel('\Deltat')
+    axis([0 5 0.01 1000000])
 end
 
 

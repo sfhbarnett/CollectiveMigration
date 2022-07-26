@@ -1,4 +1,3 @@
-%trajectories
 function msd = MSD(vectorfield)
 
 msd = [];
@@ -19,15 +18,15 @@ for j = 1:size(vectorfield,1)
             vfield = reshape(vectorfield(:,4,i-1),[sqrt(size(vectorfield,1)),sqrt(size(vectorfield,1))]);
             newx = round(trajectory(i-1,1));
             newy = round(trajectory(i-1,2));
-            
+
             if newy < 1 || newy > 63 || newx < 1 || newx > 63 %if trajectory leaves field
                 lostvector = 1;
                 break
             end
-            
+
             newu = ufield(newy,newx);
             newv = vfield(newy,newx);
-            
+
             if and(newu==0, newv==0) %should change this to be NaNs maybe
                 lostvector = 1;
                 break

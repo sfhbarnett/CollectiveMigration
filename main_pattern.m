@@ -4,7 +4,7 @@ clear
 path = '/Users/sbarnett/Downloads/cleanfields_example/200_WD_C1_20211108_MCF10ARab5A_H2BGFP_Invasion-Scene-33-P48-B01DC_BL_Results';
 tifpath = [path(1:end-8),'.tif'];
 
-pixelsize = 0.65 * 16; % pixel size in microns multiply half the PIV window size
+pixelsize = 0.65 * 16; % pixel size in microns multiply the PIV window size multiplied by overlap
 timeinterval = 600/60/60; % time in hours
 plotting = 1;
 
@@ -42,7 +42,7 @@ squarev = reshape(vectorfield(:,4,:),[width,height,nframes]);
 %% Linearise Field - works
 %Remove unconnected vectors
 dX = vectorfield(1,1,1);
-vectorfield = cleanField(vectorfield);
+vectorfield = cleanField(vectorfield,width/2,height/2);
 %center x and y coordinates, assumes no movement
 [centerX, centerY] = findCentre(vectorfield,width,height);
 %change scale of x,y coordinates
@@ -56,8 +56,8 @@ for i = 1:nframes
     linearfield(:,4,i) = lfV(:);
 end
 
-vectorfield(:,1,:) = vectorfield(:,1,:).*dX;
-vectorfield(:,2,:) = vectorfield(:,2,:).*dX;
+linearfield(:,1,:) = linearfield(:,1,:).*dX;
+linearfield(:,2,:) = linearfield(:,2,:).*dX;
 
 %% Calculate vRMS through time - works
 % Check zeros dealt with properly
@@ -144,33 +144,42 @@ Linevideo(tj,fullfile(path,'vidlines.avi'),10)
 
 %% Create Alignment map
 frame = 1;
-threshold = 200; %Change this to set the amount of original frame that is visible
+threshold = 33100; %Change this to set the amount of original frame that is visible
+field2plot = vectorfield; %change between vectorfield and linearfield
+field2plot(isnan(field2plot)) = 0;
 
-alignmap = reshape(alignment(vectorfield(:,:,frame)),[width,height]);
-meanu = mean(mean(vectorfield(:,3,frame)));
-meanv = mean(mean(vectorfield(:,4,frame)));
+alignmap = reshape(alignment(field2plot(:,:,frame)),[width,height]);
+meanu = mean(mean(field2plot(:,3,frame)));
+meanv = mean(mean(field2plot(:,4,frame)));
 
-magnitude = sqrt(vectorfield(:,3,frame).^2 + vectorfield(:,4,frame).^2);
+magnitude = sqrt(field2plot(:,3,frame).^2 + field2plot(:,4,frame).^2);
 meanmagnitude = sqrt(meanu^2 + meanv^2);
 
 scale = magnitude./meanmagnitude;
 im1 = images(:,:,frame);
 
-u = reshape(vectorfield(:,3,frame)./scale,[width,height]);
-v = reshape(vectorfield(:,4,frame)./scale,[width,height]);
+u = reshape(field2plot(:,3,frame)./scale,[width,height]);
+v = reshape(field2plot(:,4,frame)./scale,[width,height]);
 %Creates same style alignment map with scaled vectors, file -> save as -> .svg
+%to zoom change these values
+left = 750;
+right = 1200;
+top = 750;
+bottom = 1200;
+%
 hf = figure;
 h1 = axes;
 p1 = imagesc(imresize(alignmap,size(images(:,:,frame))));
 axis equal tight
+axis([left right top bottom])
 h2 = axes;
 p2 = imagesc(im1>threshold,'AlphaData',im1>threshold)
 set(h2,'color','none','visible','off')
 colormap(h2,gray)
 axis equal tight
 hold on
-quiver(vectorfield(:,1,frame).*2,vectorfield(:,2,frame).*2,u(:),v(:),'k')
-
+quiver(field2plot(:,1,frame),field2plot(:,2,frame),u(:),v(:),'k','LineWidth',2)
+axis([left right top bottom])
 %% Create Orientation map
 
 orientmap = reshape(orientation(vectorfield(:,:,1)),[sqrt(3969),sqrt(3969)]);
