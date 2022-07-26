@@ -1,7 +1,7 @@
 %% Load in data
 clear
 
-path = '/Users/sbarnett/Downloads/cleanfields_example/200_WD_C1_20211108_MCF10ARab5A_H2BGFP_Invasion-Scene-33-P48-B01DC_BL_Results/';
+path = '/Users/sbarnett/Downloads/cleanfields_example/200_WD_C1_20211108_MCF10ARab5A_H2BGFP_Invasion-Scene-33-P48-B01DC_BL_Results';
 tifpath = [path(1:end-8),'.tif'];
 
 pixelsize = 0.65 * 32; % pixel size in microns multiply half the PIV window size
@@ -160,32 +160,41 @@ Linevideo(tj,fullfile(path,'vidlines.avi'),10,images)
 
 %% Create Alignment map
 frame = 100;
-threshold = 33150;
+threshold = 33100; %Change this to set the amount of original frame that is visible
+%to zoom change these values
+left = 750;
+right = 1200;
+top = 750;
+bottom = 1200;
+field2plot = vectorfield; %change between vectorfield and linearfield
+field2plot(isnan(field2plot)) = 0;
 
-alignmap = reshape(alignment(vectorfield(:,:,frame)),[width,height]);
-meanu = mean(mean(vectorfield(:,3,frame)));
-meanv = mean(mean(vectorfield(:,4,frame)));
+alignmap = reshape(alignment(field2plot(:,:,frame)),[width,height]);
+meanu = mean(mean(field2plot(:,3,frame)));
+meanv = mean(mean(field2plot(:,4,frame)));
 
-magnitude = sqrt(vectorfield(:,3,frame).^2 + vectorfield(:,4,frame).^2);
+magnitude = sqrt(field2plot(:,3,frame).^2 + field2plot(:,4,frame).^2);
 meanmagnitude = sqrt(meanu^2 + meanv^2);
 
 scale = magnitude./meanmagnitude;
 im1 = images(:,:,frame);
 
-u = reshape(vectorfield(:,3,frame)./scale,[width,height]);
-v = reshape(vectorfield(:,4,frame)./scale,[width,height]);
+u = reshape(field2plot(:,3,frame)./scale,[width,height]);
+v = reshape(field2plot(:,4,frame)./scale,[width,height]);
 %Creates same style alignment map with scaled vectors, file -> save as -> .svg
 hf = figure;
 h1 = axes;
 p1 = imagesc(imresize(alignmap,size(images(:,:,frame))));
 axis equal tight
+axis([left right top bottom])
 h2 = axes;
 p2 = imagesc(im1>threshold,'AlphaData',im1>threshold)
 set(h2,'color','none','visible','off')
 colormap(h2,gray)
 axis equal tight
 hold on
-quiver(vectorfield(:,1,frame),vectorfield(:,2,frame),u(:),v(:),'k')
+quiver(field2plot(:,1,frame),field2plot(:,2,frame),u(:),v(:),'k','LineWidth',2)
+axis([left right top bottom])
 
 %% Create Orientation map
 

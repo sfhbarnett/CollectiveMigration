@@ -145,6 +145,11 @@ Linevideo(tj,fullfile(path,'vidlines.avi'),10)
 %% Create Alignment map
 frame = 1;
 threshold = 33100; %Change this to set the amount of original frame that is visible
+%to zoom change these values
+left = 750;
+right = 1200;
+top = 750;
+bottom = 1200;
 field2plot = vectorfield; %change between vectorfield and linearfield
 field2plot(isnan(field2plot)) = 0;
 
@@ -161,12 +166,7 @@ im1 = images(:,:,frame);
 u = reshape(field2plot(:,3,frame)./scale,[width,height]);
 v = reshape(field2plot(:,4,frame)./scale,[width,height]);
 %Creates same style alignment map with scaled vectors, file -> save as -> .svg
-%to zoom change these values
-left = 750;
-right = 1200;
-top = 750;
-bottom = 1200;
-%
+
 hf = figure;
 h1 = axes;
 p1 = imagesc(imresize(alignmap,size(images(:,:,frame))));
