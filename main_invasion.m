@@ -92,17 +92,19 @@ end
 
 LOP = zeros([nframes,1]);
 ROP = zeros([nframes,1]);
+TOP = zeros([nframes,1]);
 for i = 1:nframes
     LOP(i) = LinearOrderParameter(vectorfield(:,:,i));
     [centerX, centerY] = findCentre(vectorfield(:,:,i),width,height);
-    ROP(i) = RotationalOrderParameter(vectorfield(:,:,i),centerX,centerY);
+    [ROP(i),TOP(i)] = RotationalOrderParameter(vectorfield(:,:,i),centerX,centerY);
 end
-
+figure
 if plotting
     plot(time,LOP)
     hold on
-    plot(time,ROP)
-    axis([0 23 0 1])
+    plot(time,smooth(ROP))
+    plot(time,smooth(TOP))
+    axis([0 23 0 .2])
     axis square
     title('Linear Order Parameter','FontSize',16)
     xlabel('Time (hours)','FontSize',14)

@@ -1,7 +1,7 @@
 %% Load in data
 clear
 
-path = '/Users/sbarnett/Downloads/cleanfields_example/200_WD_C1_20211108_MCF10ARab5A_H2BGFP_Invasion-Scene-33-P48-B01DC_BL_Results';
+path = '/Users/sbarnett/Documents/PIVData/fatima/200_D_C1_Phase_20220307_MCF10ARab5A_H2BGFP_uPatterns-01-Scene-04-P5-A01_cr_Results/PIV_roi_velocity_text';
 tifpath = [path(1:end-8),'.tif'];
 
 pixelsize = 0.65 * 16; % pixel size in microns multiply the PIV window size multiplied by overlap
@@ -80,8 +80,9 @@ end
 %% Calculate ROP
 
 ROP = zeros([nframes,1]);
+TOP = zeros([nframes,1]);
 for i = 1:size(filessort,1)
-    ROP(i) = RotationalOrderParameter(vectorfield(:,:,i),centerX,centerY)
+    [ROP(i),TOP(i)] = RotationalOrderParameter(vectorfield(:,:,i),centerX,centerY);
 end
 
 
