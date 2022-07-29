@@ -34,16 +34,20 @@ angle = rad2deg(atan2(rotnormuv(2),rotnormuv(1)))+180;
 
 if angle < 90
     xcomponent = -1*(1-angle/90);
-    ycomponent = -1-xcomponent;
+    %ycomponent = -1-xcomponent;
+    ycomponent = -sqrt(1-xcomponent^2);
 elseif angle >=90 && angle < 180
     xcomponent = (angle-90)/90;
-    ycomponent = -1*(1-xcomponent);
+    %ycomponent = -1*(1-xcomponent);
+    ycomponent = -1*sqrt(1-xcomponent^2);
 elseif angle >= 180 && angle < 270
     xcomponent = 1-(angle-180)/90;
-    ycomponent = 1-xcomponent;
+    %ycomponent = 1-xcomponent;
+    ycomponent = sqrt(1-xcomponent^2);
 elseif angle >= 270
     xcomponent = -1*((angle-270)/90);
-    ycomponent = 1-(-1*xcomponent);
+    %ycomponent = 1-(-1*xcomponent);
+    ycomponent = sqrt(1-xcomponent^2);
 end
 
 end
