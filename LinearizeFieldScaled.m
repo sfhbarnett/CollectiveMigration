@@ -5,8 +5,8 @@ function [rotationcomponent,tangentcomponent] = LinearizeFieldScaled(vectorfield
 % this function also maintains the scale of the original vector
 
 %Reserve memory for new vector components
-rotationcomponent = zeros(max(vectorfield(:,1)),max(vectorfield(:,2)));
-tangentcomponent = zeros(max(vectorfield(:,1)),max(vectorfield(:,2)));
+rotationcomponent = zeros(max(vectorfield(:,1)./vectorfield(1,1)),max(vectorfield(:,2)./vectorfield(1,2)));
+tangentcomponent = zeros(max(vectorfield(:,1)./vectorfield(1,1)),max(vectorfield(:,2)./vectorfield(1,2)));
 
 % for every vector in field
 for i = 1:size(vectorfield(:,1))

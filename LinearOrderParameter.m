@@ -3,6 +3,10 @@ function [order] = LinearOrderParameter(vectorfield)
 %   Detailed explanation goes here
 
 %Calculates the Linear Order Parameter
+%Convert double zeros to nan
+indexes = logical((vectorfield(:,3) == 0) .* (vectorfield(:,4) == 0));
+vectorfield(indexes,3) = NaN;
+vectorfield(indexes,4) = NaN;
 
 meanu = mean(vectorfield(:,3),'omitnan');
 meanv = mean(vectorfield(:,4),'omitnan');

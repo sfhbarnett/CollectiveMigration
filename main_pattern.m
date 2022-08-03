@@ -44,20 +44,21 @@ squarev = reshape(vectorfield(:,4,:),[width,height,nframes]);
 dX = vectorfield(1,1,1);
 vectorfield = cleanField(vectorfield,width/2,height/2);
 %center x and y coordinates, assumes no movement
-[centerX, centerY] = findCentre(vectorfield,width,height);
+[centerX, centerY] = findCentre(vectorfield(:,:,i),width,height);
 %change scale of x,y coordinates
-vectorfield(:,1,:) = vectorfield(:,1,:)./vectorfield(1,1,:);
-vectorfield(:,2,:) = vectorfield(:,2,:)./vectorfield(1,2,:);
+vectorfield(:,1,:) = vectorfield(:,1,:);
+vectorfield(:,2,:) = vectorfield(:,2,:);
 linearfield = vectorfield;
 %linearise the fields
 for i = 1:nframes
+    [centerX, centerY] = findCentre(vectorfield(:,:,i),width,height);
     [lfU,lfV] = LinearizeFieldScaled(vectorfield(:,:,i),centerX,centerY);
     linearfield(:,3,i) = lfU(:);
     linearfield(:,4,i) = lfV(:);
 end
 
-linearfield(:,1,:) = linearfield(:,1,:).*dX;
-linearfield(:,2,:) = linearfield(:,2,:).*dX;
+vectorfield(:,1,:) = vectorfield(:,1,:);
+vectorfield(:,2,:) = vectorfield(:,2,:);
 
 %% Calculate vRMS through time - works
 % Check zeros dealt with properly
@@ -120,7 +121,7 @@ end
 
 %% Calculate Persistence length - probably not right
 
-msd = MSD(vectorfield); % check linear vs vectorfield
+msd = MSD(vectorfield,width,height); % check linear vs vectorfield
 mMSD = mean(msd,1).*pixelsize^2;
 xtime = ((1:size(mMSD,2)).*timeinterval)'
 MSDfit = fit(xtime,mMSD','A*x.^2/(1+(B*x))','startpoint',[10 .5],'weight',1./xtime.^2);

@@ -53,6 +53,10 @@ plot(max(kymograph))
 
 vrms = zeros([nframes,1]);
 for i = 1:nframes
+    v = vectorfield(:,4,i);
+    u = vectorfield(:,3,i);
+    vectorfield(v==0 & u==0,3,i) = NaN;
+    vectorfield(v==0 & u==0,4,i) = NaN;
     vrms(i) = vRMS(vectorfield(:,:,i));
 end
 
@@ -90,12 +94,12 @@ end
 
 startframe = 10;
 endframe = 100;
-corel = Correlation(vectorfield, startframe, endframe);
+corel = Correlation(left, startframe, endframe);
 
 x=((1:length(corel))-1).*pixelsize; % create x axis
 f_=fit(x',corel','exp2'); %generate a double exponential fit
 F = f_.a*exp(f_.b*x) + f_.c*exp(f_.d*x); % create plotting data for the fit
-[Lcorr, delta1] = CorrelationLength(vectorfield,startframe,endframe,corel,x,pixelsize,f_)
+[Lcorr, delta1] = CorrelationLength(left,startframe,endframe,corel,x,pixelsize,f_)
 
 if plotting
     plot(x,corel./(f_.a +f_.c),'s'); %plot data scaled to fit
@@ -111,7 +115,7 @@ end
 %might want to give a border to MSD calculation to stop artificial
 %curtailing
 
-msd = MSD(vectorfield);
+msd = MSD(vectorfield,width,height);
 mMSD = mean(msd,1).*pixelsize^2;
 xtime = ((1:size(mMSD,2)).*timeinterval)'
 MSDfit = fit(xtime,mMSD','A*x.^2/(1+(B*x))','startpoint',[10 .5],'weight',1./xtime.^2);

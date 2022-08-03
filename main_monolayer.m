@@ -2,7 +2,7 @@
 clear
 
 %Path to folder where PIV_roi_velocity_text files are
-path = '/Users/sbarnett/Documents/PIVData/fatima/ForSam/monolayer1/C1-20210708_MCF10ARAB5A_H2BGFP_Monolayer_Doxy_withoutDoxy.czi - 20210708_MCF10ARAB5A_H2BGFP_Monolayer_Doxy_withoutDoxy.czi #19_Results';
+path = '/Users/sbarnett/Documents/PIVData/fatima/BatchFolder/monolayer/C1-20210708_MCF10ARAB5A_H2BGFP_Monolayer_Doxy_withoutDoxy.czi - 20210708_MCF10ARAB5A_H2BGFP_Monolayer_Doxy_withoutDoxy.czi #19_Results';
 tifpath = [path(1:end-8),'.tif'];
 
 pixelsize = 0.65 * 16; % pixel size in microns multiply half the PIV window size
@@ -98,7 +98,7 @@ end
 %might want to give a border to MSD calculation to stop artificial
 %curtailing
 
-msd = MSD(vectorfield);
+msd = MSD(vectorfield,width,height);
 mMSD = mean(msd,1);
 xtime = ((1:size(mMSD,2)).*timeinterval)'
 MSDfit = fit(xtime,mMSD','A*x.^2/(1+(B*x))','startpoint',[10 .5],'weight',1./xtime.^2);
@@ -127,7 +127,7 @@ tj(tj==0) = NaN;
 Linevideo(tj,fullfile(path,'vidlines.avi'),10,images)
 
 %% Create Alignment map
-frame = 100;
+frame = 1;
 threshold = 160;
 
 alignmap = reshape(alignment(vectorfield(:,:,frame)),[width,height]);

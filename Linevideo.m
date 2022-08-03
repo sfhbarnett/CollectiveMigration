@@ -16,13 +16,14 @@ figure('Position',[200,200,800,800])
 linewidth = 2;
 
 maxspeed = 0.2;
-ncol = 100;
+ncol = 50;
 cmap = jet(ncol);
 for i = 1:size(tj,1)-tjlength
     if im
         imagesc(images(:,:,i))
         colormap('gray')
         hold on
+        pause(0.0000001)
     end
     if i < tjlength
         distx = diff(tj(1:i,1:2:end)).^2;
@@ -40,6 +41,7 @@ for i = 1:size(tj,1)-tjlength
             hold on
         end
         hold off
+        pause(0.0000001)
         %plot(tj(1:i,1:2:end),tj(1:i,2:2:end))
         axis([0 max(tj(1,:).*16) 0 max(tj(1,:).*16)])
     else
@@ -58,6 +60,7 @@ for i = 1:size(tj,1)-tjlength
             hold on
         end
         hold off
+        pause(0.00000000001)
         %plot(tj(i-9:i,1:2:end),tj(i-9:i,2:2:end))
         axis([0 max(tj(1,:).*16) 0 max(tj(1,:).*16)])
     end
