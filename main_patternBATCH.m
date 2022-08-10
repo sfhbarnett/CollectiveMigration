@@ -16,16 +16,16 @@ correlation_total = [];
 persistance_total = [];
 correlationlength_total = [];
 msd_total = [];
-counter = 1;
+counter = 1; 
 
 for dataset = 1:size(datasets,1)
 
     path = fullfile(experimentpath,datasets(dataset).name);
     tifpath = [path(1:end-8),'.tif'];
 
-    pixelsize = 0.65 * 32; % pixel size in microns multiply half the PIV window size
+    pixelsize = 0.65 * 16; % pixel size in microns multiply the PIV window size multiplied by overlap
     timeinterval = 600/60/60; % time in hours
-    plotting = 1;
+
     %Clean files and natural sort
     files = dir(fullfile(path,'PIV_roi_velocity_text'));
     names = {};
@@ -39,13 +39,15 @@ for dataset = 1:size(datasets,1)
         vectorfield(:,:,i) = csvread(fullfile(path,'PIV_roi_velocity_text',filessort{i}));
     end
 
-    time = (1:size(names,2)).*timeinterval;
-
     info = imfinfo(tifpath);
     numberOfPages = length(info);
+
     for k = 1 : numberOfPages
         images(:,:,k) = imread(tifpath, k);
     end
+
+
+    time = (1:size(names,2)).*timeinterval;
 
     width = max(vectorfield(:,1,1))/max(vectorfield(1,1,1));
     height = max(vectorfield(:,2,1))/max(vectorfield(1,2,1));
@@ -54,7 +56,6 @@ for dataset = 1:size(datasets,1)
     squarey = reshape(vectorfield(:,2,:),[width,height,nframes]);
     squareu = reshape(vectorfield(:,3,:),[width,height,nframes]);
     squarev = reshape(vectorfield(:,4,:),[width,height,nframes]);
-
 
     % Linearise Field - works
     %Remove unconnected vectors
@@ -74,6 +75,7 @@ for dataset = 1:size(datasets,1)
         linearfield(:,4,i) = lfV(:);
     end
 
+
     % Recreate quiver images after cleaning
     colorquiverpath = fullfile(path,'cleanfields');
     mkdir(colorquiverpath);
@@ -87,44 +89,38 @@ for dataset = 1:size(datasets,1)
 
     % Calculate vRMS through time - works
     % Check zeros dealt with properly
-    % vrms on normal field will equal zero, all movement averages
 
     vrms = zeros([nframes,1]);
     for i = 1:nframes
         vrms(i) = vRMS(linearfield(:,:,i));
     end
 
-
-    % Calculate order paramter
+    % Calculate ROP
 
     LOP = zeros([nframes,1]);
     ROP = zeros([nframes,1]);
     TOP = zeros([nframes,1]);
-    RTOP = zeros([nframes,1]);
     for i = 1:nframes
         LOP(i) = LinearOrderParameter(vectorfield(:,:,i));
         [centerX, centerY] = findCentre(vectorfield(:,:,i),width,height);
         [ROP(i),TOP(i)] = RotationalOrderParameter(vectorfield(:,:,i),centerX,centerY);
-        RTOP(i) = ROP(i) + LOP(i);
     end
 
-    % Calculate Correlation - works
+    % Calculate Correlation
 
     startframe = 10;
     endframe = 100;
-    corel = Correlation(vectorfield, startframe, endframe);
+    corel = Correlation(linearfield, startframe, endframe);
 
     x=((1:length(corel))-1).*pixelsize; % create x axis
-    f_=fit(x',corel','exp2','Upper',[100,100,100,100],'Lower',[-100,-100,-100,-100]); %generate a double exponential fit
+    f_=fit(x',corel','exp2'); %generate a double exponential fit
     F = f_.a*exp(f_.b*x) + f_.c*exp(f_.d*x); % create plotting data for the fit
     [Lcorr, delta1] = CorrelationLength(vectorfield,startframe,endframe,corel,x,pixelsize,f_)
 
-    % Calculate Persistence length - works
-    %might want to give a border to MSD calculation to stop artificial
-    %curtailing
+    % Calculate Persistence length
 
-    msd = MSD(vectorfield,width,height);
-    mMSD = mean(msd,1,'omitnan').*pixelsize^2;
+    msd = MSD(vectorfield,width,height); % check linear vs vectorfield
+    mMSD = mean(msd,1).*pixelsize^2;
     xtime = ((1:size(mMSD,2)).*timeinterval)'
     MSDfit = fit(xtime,mMSD','A*x.^2/(1+(B*x))','startpoint',[10 .5],'weight',1./xtime.^2);
 
@@ -133,15 +129,13 @@ for dataset = 1:size(datasets,1)
     ci = confint(MSDfit,.95);
     da = ci(2,1)-ci(1,1);
     db = ci(2,2)-ci(1,2);
-    persistence_length = sqrt(A)./B;
+    L_p = sqrt(A)./B;
 
-    % Generate video with trails
+    % Line video
+    tj = trajectories(vectorfield,width,height);
+    tj(tj==0) = NaN;
+    Linevideo(tj,fullfile(path,'vidlines.avi'),10)
 
-%     tj = trajectories(vectorfield,width,height);
-%     tj(tj==0) = NaN;
-%     Linevideo(tj,fullfile(path,'vidlines.avi'),10,images)
-
-    % Create rotational Alignment map
     rotalignpath = fullfile(path,'rotationalignment');
     mkdir(rotalignpath);
     for frame = 1:nframes
@@ -223,14 +217,12 @@ for dataset = 1:size(datasets,1)
         LOP = padarray(LOP,[size(LOP_total,1)-size(LOP,1),0],NaN,'post');
         ROP = padarray(ROP,[size(ROP_total,1)-size(ROP,1),0],NaN,'post');
         TOP = padarray(TOP,[size(TOP_total,1)-size(TOP,1),0],NaN,'post');
-        RTOP = padarray(RTOP,[size(RTOP_total,1)-size(RTOP,1),0],NaN,'post');
         mMSD = padarray(mMSD,[size(msd_total,1)-size(mMSD,1),0],NaN,'post');
     end
     vrms_total(:,counter) = vrms;
     LOP_total(:,counter) = LOP;
     ROP_total(:,counter) = ROP;
     TOP_total(:,counter) = TOP;
-    RTOP_total(:,counter) = RTOP;
     correlation_total(counter) = f_.b;
     persistance_total(counter) = persistence_length;
     correlationlength_total(counter) = Lcorr;
@@ -243,7 +235,6 @@ writematrix(persistance_total,fullfile(experimentpath,'persistance_total.csv'))
 writematrix(correlationlength_total,fullfile(experimentpath,'correlation_length.csv'))
 writematrix(ROP_total,fullfile(experimentpath,'ROP_total.csv'))
 writematrix(TOP_total,fullfile(experimentpath,'TOP_total.csv'))
-writematrix(RTOP_total,fullfile(experimentpath,'RTOP_total.csv'))
 writematrix(LOP_total,fullfile(experimentpath,'LOP_total.csv'))
 writematrix(msd_total,fullfile(experimentpath,'MSD_total.csv'))
 

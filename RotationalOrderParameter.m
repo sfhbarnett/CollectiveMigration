@@ -1,4 +1,4 @@
-function [ROP,TOP] = RotationalOrderParameter(vectorfield,cx,cy)
+function [ROP,TOP,RTOP] = RotationalOrderParameter(vectorfield,cx,cy)
 %Calculates the rotational order parameter
 %   Takes as inpuy an mx4 matrix representing a vectorfield with columens
 %   x, y, u, v
@@ -22,14 +22,12 @@ fieldv = fieldv(:);
 rotationcomponent = round(rotationcomponent,5);
 tangentcomponent = round(tangentcomponent,5);
 meanu = mean(rotationcomponent(:),'omitnan');
-meanu2 = mean(mean(rotationcomponent.^2,'omitnan'),'omitnan');
 mean_uv2=mean(mean(rotationcomponent.^2+tangentcomponent.^2,'omitnan'),'omitnan');
 ROP = meanu.^2/mean_uv2;
 meanv = mean(tangentcomponent(:),'omitnan');
-meanv2 = mean(mean(tangentcomponent.^2,'omitnan'),'omitnan');
 TOP = meanv.^2/mean_uv2;
+RTOP = mean(meanu.^2 + meanv.^2)/mean_uv2;
 
-mean_v2=mean(mean(rotationcomponent.^2+tangentcomponent.^2,'omitnan'),'omitnan');
 if isnan(ROP)
     ROP = 0;
 end

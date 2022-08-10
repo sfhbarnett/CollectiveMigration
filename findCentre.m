@@ -7,6 +7,7 @@ function [cx,cy] = findCentre(vectorfield,width,height)
 u = vectorfield(:,3);
 u = reshape(u,[width,height]);
 
+%nonzero pixels
 ulog = u~=0;
 
 dim1 = max(ulog,[],1);

@@ -211,3 +211,20 @@ set(h2,'color','none','visible','off')
 axis equal tight
 colormap(h2,gray)
 colormap(h1,hsv)
+
+%% calculate radial profile
+
+t
+radialprofile = nan(round(sqrt(width^2+height^2)),nframes);
+
+for i = 1:nframes
+    [centerX, centerY] = findCentre(vectorfield(:,:,i),width,height);
+    rp = radialSymmetry(vectorfield(:,:,i),width,height,centerX,centerY);
+    radialprofile(1:size(rp,2),i) = rp;
+end
+
+
+
+
+
+

@@ -2,7 +2,7 @@
 clear
 
 %Path to folder where PIV_roi_velocity_text files are
-path = '/Users/sbarnett/Documents/PIVData/fatima/BatchFolder/monolayer/C1-20210708_MCF10ARAB5A_H2BGFP_Monolayer_Doxy_withoutDoxy.czi - 20210708_MCF10ARAB5A_H2BGFP_Monolayer_Doxy_withoutDoxy.czi #19_Results';
+path = '/Users/sbarnett/Documents/PIVData/fatima/test/small_Results';
 tifpath = [path(1:end-8),'.tif'];
 
 pixelsize = 0.65 * 16; % pixel size in microns multiply half the PIV window size
@@ -145,7 +145,7 @@ v = reshape(vectorfield(:,4,frame)./scale,[width,height]);
 %Creates same style alignment map with scaled vectors, file -> save as -> .svg
 hf = figure;
 h1 = axes;
-p1 = imagesc(imresize(alignmap,size(images(:,:,frame))));
+p1 = imagesc(imresize(alignmap,size(images(:,:,frame)),'nearest'));
 axis equal tight
 h2 = axes;
 p2 = imagesc(im1>threshold,'AlphaData',im1>threshold)
