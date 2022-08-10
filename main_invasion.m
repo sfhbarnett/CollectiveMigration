@@ -214,7 +214,7 @@ colormap(h1,hsv)
 
 %% calculate radial profile
 
-t
+
 radialprofile = nan(round(sqrt(width^2+height^2)),nframes);
 
 for i = 1:nframes
