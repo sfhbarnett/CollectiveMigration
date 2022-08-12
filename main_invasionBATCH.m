@@ -83,7 +83,7 @@ for dataset = 1:size(datasets,1)
         im = frame2im(F);
         imwrite(im, fullfile(colorquiverpath, [num2str(frame),'.tif']));
     end
-    fclose('all')
+    fclose('all');
 
     % Calculate vRMS through time - works
     % Check zeros dealt with properly
@@ -117,7 +117,7 @@ for dataset = 1:size(datasets,1)
     x=((1:length(corel))-1).*pixelsize; % create x axis
     f_=fit(x',corel','exp2','Upper',[100,100,100,100],'Lower',[-100,-100,-100,-100]); %generate a double exponential fit
     F = f_.a*exp(f_.b*x) + f_.c*exp(f_.d*x); % create plotting data for the fit
-    [Lcorr, delta1] = CorrelationLength(vectorfield,startframe,endframe,corel,x,pixelsize,f_)
+    [Lcorr, delta1] = CorrelationLength(vectorfield,startframe,endframe,corel,x,pixelsize,f_);
 
     % Calculate Persistence length - works
     %might want to give a border to MSD calculation to stop artificial
@@ -125,7 +125,7 @@ for dataset = 1:size(datasets,1)
 
     msd = MSD(vectorfield,width,height);
     mMSD = mean(msd,1,'omitnan').*pixelsize^2;
-    xtime = ((1:size(mMSD,2)).*timeinterval)'
+    xtime = ((1:size(mMSD,2)).*timeinterval)';
     MSDfit = fit(xtime,mMSD','A*x.^2/(1+(B*x))','startpoint',[10 .5],'weight',1./xtime.^2);
 
     A = MSDfit.A;
