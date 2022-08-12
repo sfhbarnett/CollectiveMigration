@@ -35,20 +35,25 @@ right = cleanField(vectorfield,width-5,height-5);
 
 %%
 
-for t = 1:103
+for t = 1:nframes
     quiver(left(:,1,t),left(:,2,t),left(:,3,t),left(:,4,t),1.5)
     pause(0.3)
 end
 %%
 kymograph = zeros(sqrt(size(vectorfield,1)),size(time,2));
-for i = 1:size(vectorfield,3)
+for i = 1:nframes
     i
     ufield = reshape(vectorfield(:,3,i),[sqrt(size(vectorfield,1)),sqrt(size(vectorfield,1))]);
     kymograph(:,i) = mean(ufield);
 end
 imagesc(abs(kymograph).')
 figure
-plot(kymograph)
+map = jet(nframes)
+for i = 1:nframes
+    plot(kymograph(:,i),'Color',cmap(i,:))
+    hold on
+end
+
 %% Calculate vRMS through time - works
 
 vrms = zeros([nframes,1]);
