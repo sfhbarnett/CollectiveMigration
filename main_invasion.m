@@ -223,8 +223,11 @@ for i = 1:nframes
     radialprofile(1:size(rp,2),i) = rp;
 end
 
-
-
+cmap = jet(156);
+for i = 1:nframes
+    plot(radialprofile(1:40,i),'Color',cmeap(i,:))
+    hold on
+end
 
 
 

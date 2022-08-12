@@ -217,6 +217,17 @@ for dataset = 1:size(datasets,1)
         colormap(hsv)
         saveas(gcf,fullfile(orientationpath, [num2str(frame),'.tif']))
     end
+    
+    %Radial profile
+    radialprofile = nan(round(sqrt(width^2+height^2)),nframes);
+    
+    for i = 1:nframes
+        [centerX, centerY] = findCentre(vectorfield(:,:,i),width,height);
+        rp = radialSymmetry(vectorfield(:,:,i),width,height,centerX,centerY);
+        radialprofile(1:size(rp,2),i) = rp;
+    end
+    writematrix(radialprofile,fullfile(experimentpath,[datasets(dataset).name,'_radialprofile.csv']))
+
     fclose('all')
     if size(vrms_total,1)-size(vrms,1) > 0
         vrms = padarray(vrms,[size(vrms_total,1)-size(vrms,1),0],NaN,'post');
