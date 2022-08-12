@@ -228,7 +228,7 @@ for dataset = 1:size(datasets,1)
     end
     writematrix(radialprofile,fullfile(experimentpath,[datasets(dataset).name,'_radialprofile.csv']))
 
-    fclose('all')
+    fclose('all');
     if size(vrms_total,1)-size(vrms,1) > 0
         vrms = padarray(vrms,[size(vrms_total,1)-size(vrms,1),0],NaN,'post');
         LOP = padarray(LOP,[size(LOP_total,1)-size(LOP,1),0],NaN,'post');

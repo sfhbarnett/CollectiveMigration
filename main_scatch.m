@@ -48,7 +48,7 @@ for i = 1:size(vectorfield,3)
 end
 imagesc(abs(kymograph).')
 figure
-plot(max(kymograph))
+plot(kymograph)
 %% Calculate vRMS through time - works
 
 vrms = zeros([nframes,1]);
