@@ -1,7 +1,7 @@
 %% Load in data
 clear
 
-path = '/Users/sbarnett/Documents/PIVData/fatima/200_D_C1_Phase_20220307_MCF10ARab5A_H2BGFP_uPatterns-01-Scene-04-P5-A01_cr_Results/PIV_roi_velocity_text';
+path = '/Users/sbarnett/Downloads/uPatterns_forSam/500_WD_C1-20210710_MCF10ARAB5A_H2BGFP_Micropatterns_diffSizes_Doxy_withoutDoxy.czi #030_Results';
 tifpath = [path(1:end-8),'.tif'];
 
 pixelsize = 0.65 * 16; % pixel size in microns multiply the PIV window size multiplied by overlap
@@ -25,7 +25,7 @@ info = imfinfo(tifpath);
 numberOfPages = length(info);
 
 for k = 1 : numberOfPages
-    images(:,:,k) = imread(tifpath, k);
+    image(:,:,k) = imread(tifpath, k);
 end	
 
 
@@ -38,6 +38,22 @@ squarex =reshape(vectorfield(:,1,:),[width,height,nframes]);
 squarey = reshape(vectorfield(:,2,:),[width,height,nframes]);
 squareu = reshape(vectorfield(:,3,:),[width,height,nframes]);
 squarev = reshape(vectorfield(:,4,:),[width,height,nframes]);
+
+%% Processing with Rois - Don't close the image until after the next section
+t = 1;
+imagesc(image(:,:,t))
+roi = drawcircle();
+
+%% Process Rois
+bw = createMask(roi);
+for j = 1:size(vectorfield,1)
+    x = vectorfield(j,1);
+    y = vectorfield(j,2);
+    if bw(x,y) == 0
+        vectorfield(j,3:4) = [0,0];
+    end
+end
+% Now close the image!
 
 %% Linearise Field - works
 %Remove unconnected vectors
