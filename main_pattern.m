@@ -42,6 +42,8 @@ squarev = reshape(vectorfield(:,4,:),[width,height,nframes]);
 %% Processing with Rois - Don't close the image until after the next section
 t = 1;
 imagesc(image(:,:,t))
+colormap('gray')
+axis equal tight
 roi = drawcircle();
 
 %% Process Rois
