@@ -48,7 +48,7 @@ for i = 1:nframes
 end
 imagesc(abs(kymograph).')
 figure
-map = jet(nframes)
+cmap = jet(nframes)
 for i = 1:nframes
     plot(kymograph(:,i),'Color',cmap(i,:))
     hold on
@@ -77,10 +77,12 @@ end
 
 LOPL = zeros([nframes,1]);
 LOPR = zeros([nframes,1]);
+LOPLR = zeros([nframes,1]);
 LOP = zeros([nframes,1]);
 for i = 1:nframes
     LOPL(i) = LinearOrderParameter(left(:,:,i));
     LOPR(i) = LinearOrderParameter(right(:,:,i));
+    LOPLR(i) = (LOPL(i) + LOPR(i))/2
     LOP(i) = LinearOrderParameter(vectorfield(:,:,i));
 end
 
@@ -99,15 +101,24 @@ end
 
 startframe = 10;
 endframe = 100;
-corel = Correlation(left, startframe, endframe);
+corelleft = Correlation(left, startframe, endframe);
+corelright = Correlation(right, startframe, endframe);
 
-x=((1:length(corel))-1).*pixelsize; % create x axis
-f_=fit(x',corel','exp2'); %generate a double exponential fit
+%left
+x=((1:length(corelleft))-1).*pixelsize; % create x axis
+f_=fit(x',corelleft','exp2'); %generate a double exponential fit
 F = f_.a*exp(f_.b*x) + f_.c*exp(f_.d*x); % create plotting data for the fit
-[Lcorr, delta1] = CorrelationLength(left,startframe,endframe,corel,x,pixelsize,f_)
+[Lcorrleft, delta1] = CorrelationLength(left,startframe,endframe,corelleft,x,pixelsize,f_)
+%right
+x=((1:length(corelright))-1).*pixelsize; % create x axis
+f_=fit(x',corelright','exp2'); %generate a double exponential fit
+F = f_.a*exp(f_.b*x) + f_.c*exp(f_.d*x); % create plotting data for the fit
+[Lcorrright, delta1] = CorrelationLength(right,startframe,endframe,corelright,x,pixelsize,f_)
+
+Lcorr = (Lcorrleft+Lcorrright)/2;
 
 if plotting
-    plot(x,corel./(f_.a +f_.c),'s'); %plot data scaled to fit
+    plot(x,corelleft./(f_.a +f_.c),'s'); %plot data scaled to fit
     hold on
     plot(x,F/(f_.a +f_.c),'r'); %plot fit
     axis([0 150 0 1])
@@ -121,7 +132,7 @@ end
 %curtailing
 
 msd = MSD(vectorfield,width,height);
-mMSD = mean(msd,1).*pixelsize^2;
+mMSD = mean(msd,1,"omitnan").*pixelsize^2;
 xtime = ((1:size(mMSD,2)).*timeinterval)'
 MSDfit = fit(xtime,mMSD','A*x.^2/(1+(B*x))','startpoint',[10 .5],'weight',1./xtime.^2);
 
@@ -130,7 +141,7 @@ B = MSDfit.B;
 ci = confint(MSDfit,.95);
 da = ci(2,1)-ci(1,1);
 db = ci(2,2)-ci(1,2);
-L_p = sqrt(A)./B;
+persistence_length = sqrt(A)./B;
 
 if plotting
     loglog(xtime,mMSD)

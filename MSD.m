@@ -30,11 +30,16 @@ for j = 1:size(vectorfield,1)
             if newy < 1
                 break
             end
-
-            newu = ufield(newy,newx);
-            newv = vfield(newy,newx);
-
-            trajectory(i,:) = [trajectory(i-1,1)+newu,trajectory(i-1,2)+newv];
+            if ~isnan(newy) && ~isnan(newx)
+                if ~isnan(ufield(newy,newx)) && ~isnan(vfield(newy,newx))
+                    newu = ufield(newy,newx);
+                    newv = vfield(newy,newx);
+                else
+                    newu = 0;
+                    newv = 0;
+                end         
+                trajectory(i,:) = [trajectory(i-1,1)+newu,trajectory(i-1,2)+newv];
+            end
         end
         if size(trajectory,1) < size(vectorfield,3)
             trajectory = padarray(trajectory,[size(vectorfield,3)-size(trajectory,1),0],NaN,'post');
