@@ -46,7 +46,7 @@ for i = 1:nframes
     ufield = reshape(vectorfield(:,3,i),[sqrt(size(vectorfield,1)),sqrt(size(vectorfield,1))]);
     kymograph(:,i) = mean(ufield);
 end
-imagesc(abs(kymograph).')
+imagesc(abs(kymograph).',[0.1, 0.4]) %min max values of 0.1 and 0.4
 figure
 cmap = jet(nframes)
 for i = 1:nframes
@@ -66,6 +66,7 @@ for i = 1:nframes
 end
 
 if plotting
+    figure
     plot(time, vrms,'o','MarkerFaceColor',[0, 0.4470, 0.7410])
     axis([0 23 0 60])
     axis square
@@ -87,6 +88,7 @@ for i = 1:nframes
 end
 
 if plotting
+    figure
     plot(time,LOPL)
     hold on
     plot(time,LOPR)
@@ -118,6 +120,7 @@ F = f_.a*exp(f_.b*x) + f_.c*exp(f_.d*x); % create plotting data for the fit
 Lcorr = (Lcorrleft+Lcorrright)/2;
 
 if plotting
+    figure
     plot(x,corelleft./(f_.a +f_.c),'s'); %plot data scaled to fit
     hold on
     plot(x,F/(f_.a +f_.c),'r'); %plot fit
@@ -144,6 +147,7 @@ db = ci(2,2)-ci(1,2);
 persistence_length = sqrt(A)./B;
 
 if plotting
+    figure
     loglog(xtime,mMSD)
     title('Mean Square Displacement','FontSize',16)
     xlabel('\DeltaT')
