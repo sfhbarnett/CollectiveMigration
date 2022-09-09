@@ -26,7 +26,7 @@ numberOfPages = length(info);
 
 for k = 1 : numberOfPages
     image(:,:,k) = imread(tifpath, k);
-end	
+end
 
 
 time = (1:size(names,2)).*timeinterval;
@@ -52,7 +52,7 @@ for j = 1:size(vectorfield,1)
     x = vectorfield(j,1);
     y = vectorfield(j,2);
     if bw(x,y) == 0
-        vectorfield(j,3:4) = [0,0];
+        vectorfield(j,3:4,:) = repmat([0,0],[1,1,126]);
     end
 end
 % Now close the image!
@@ -78,6 +78,16 @@ end
 vectorfield(:,1,:) = vectorfield(:,1,:);
 vectorfield(:,2,:) = vectorfield(:,2,:);
 
+%% Recreate quiver images after cleaning
+path = '/Users/sbarnett/Downloads/cleanfields_example/cleanfields';
+mkdir(path)
+for frame = 1:nframes
+    frame
+    colorquiver(vectorfield(:,1,frame),vectorfield(:,2,frame),vectorfield(:,3,frame),vectorfield(:,4,frame),images(:,:,frame),0.5)
+    F = getframe(gca);
+    im = frame2im(F);
+    imwrite(im, fullfile(path, [num2str(frame),'.tif']));
+end
 %% Calculate vRMS through time - works
 % Check zeros dealt with properly
 % vrms on normal field will equal zero, all movement averages
@@ -161,56 +171,49 @@ end
 tj = trajectories(vectorfield,width,height);
 tj(tj==0) = NaN;
 Linevideo(tj,fullfile(path,'vidlines.avi'),10)
+%%
+linalignpath = fullfile(path,'linearalignment');
+mkdir(linalignpath);
+for frame = 1:nframes
+    linearfield(isnan(linearfield)) = 0;
 
-%% Create Alignment map
-frame = 1;
-threshold = 33100; %Change this to set the amount of original frame that is visible
-%to zoom change these values
-left = 750;
-right = 1200;
-top = 750;
-bottom = 1200;
-field2plot = vectorfield; %change between vectorfield and linearfield
-field2plot(isnan(field2plot)) = 0;
+    alignmap = reshape(alignment(linearfield(:,:,frame)),[width,height]);
+    meanu = mean(mean(linearfield(:,3,frame),'omitnan'),'omitnan');
+    meanv = mean(mean(linearfield(:,4,frame),'omitnan'),'omitnan');
 
-alignmap = reshape(alignment(field2plot(:,:,frame)),[width,height]);
-meanu = mean(mean(field2plot(:,3,frame)));
-meanv = mean(mean(field2plot(:,4,frame)));
+    magnitude = sqrt(linearfield(:,3,frame).^2 + linearfield(:,4,frame).^2);
+    meanmagnitude = sqrt(meanu^2 + meanv^2);
 
-magnitude = sqrt(field2plot(:,3,frame).^2 + field2plot(:,4,frame).^2);
-meanmagnitude = sqrt(meanu^2 + meanv^2);
+    scale = magnitude./meanmagnitude;
 
-scale = magnitude./meanmagnitude;
-im1 = images(:,:,frame);
-
-u = reshape(field2plot(:,3,frame)./scale,[width,height]);
-v = reshape(field2plot(:,4,frame)./scale,[width,height]);
-%Creates same style alignment map with scaled vectors, file -> save as -> .svg
-
-hf = figure;
-h1 = axes;
-p1 = imagesc(imresize(alignmap,size(images(:,:,frame))));
-axis equal tight
-axis([left right top bottom])
-h2 = axes;
-p2 = imagesc(im1>threshold,'AlphaData',im1>threshold)
-set(h2,'color','none','visible','off')
-colormap(h2,gray)
-axis equal tight
-hold on
-quiver(field2plot(:,1,frame),field2plot(:,2,frame),u(:),v(:),'k','LineWidth',2)
-axis([left right top bottom])
+    u = reshape(linearfield(:,3,frame)./scale,[width,height]);
+    v = reshape(linearfield(:,4,frame)./scale,[width,height]);
+    %Creates same style alignment map with scaled vectors, file -> save as -> .svg
+    alignmap = imresize(alignmap,size(image(:,:,frame)),'nearest');
+    p1 = imagesc(alignmap,[-1 1]);
+    imAlpha = ones(size(alignmap));
+    imAlpha(isnan(alignmap))=0;
+    p1.AlphaData = imAlpha;
+    colormap default
+    axis equal tight
+    hold on
+    quiver(linearfield(:,1,frame),linearfield(:,2,frame),u(:),v(:),'k')
+    hold off
+    pause(0.0000001)
+    saveas(gcf,fullfile(linalignpath, [num2str(frame),'.tif']))
+end
 %% Create Orientation map
+orientationpath = fullfile(path,'orientationmap');
+mkdir(orientationpath);
 
-orientmap = reshape(orientation(vectorfield(:,:,1)),[sqrt(3969),sqrt(3969)]);
-%Creates same style orientation map, file -> save as -> .svg
-hf = figure;
-h1 = axes;
-p1 = imagesc(imresize(orientmap,size(images(:,:,frame)),'bilinear'));
-axis equal tight
-h2 = axes;
-p2 = imagesc(images(:,:,frame),'AlphaData',0.5)
-set(h2,'color','none','visible','off')
-axis equal tight
-colormap(h2,gray)
-colormap(h1,hsv)
+for frame=1:nframes
+    orientmap = reshape(orientation(vectorfield(:,:,frame)),[width,height]);
+    p1 = imagesc(orientmap+180,[0 360]);
+    imAlpha = ones(size(orientmap));
+    imAlpha(orientmap==0)=0;
+    p1.AlphaData = imAlpha;
+    axis equal tight
+    colormap(hsv)
+    pause(0.0000001)
+    saveas(gcf,fullfile(orientationpath, [num2str(frame),'.tif']))
+end
